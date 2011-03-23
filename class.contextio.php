@@ -283,11 +283,11 @@ class ContextIO {
 	 * of the sender.
 	 * @link http://developer.context.io/page/messageinfo
 	 * @param string $account accountId or email address of the mailbox you want to query
-	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId', 'from', 'dateSent', 'server', 'mbox', 'uid', 'thread'
+	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId', 'from', 'dateSent', 'server', 'mbox', 'uid'
 	 * @return ContextIOResponse
 	 */
 	public function messageInfo($account, $params) {
-		$params = $this->_filterParams($params, array('emailmessageid', 'from', 'datesent', 'thread','server','mbox','uid'));
+		$params = $this->_filterParams($params, array('emailmessageid', 'from', 'datesent','server','mbox','uid'));
 		return $this->get($account, 'messageinfo.json', $params);
 	}
 
