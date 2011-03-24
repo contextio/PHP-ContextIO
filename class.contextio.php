@@ -58,7 +58,7 @@ class ContextIO {
 		$this->saveHeaders = false;
 		$this->ssl = true;
 		$this->endPoint = 'api.context.io';
-		$this->apiVersion = '1.0';
+		$this->apiVersion = '1.1';
 		$this->lastResponse = null;
 		$this->authHeaders = false;
 	}
