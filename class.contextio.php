@@ -326,7 +326,7 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function threadInfo($account, $params) {
-		$params = $this->_filterParams($params, array('gmailthreadid'));
+		$params = $this->_filterParams($params, array('gmailthreadid','emailmessageid'));
 		return $this->get($account, 'threadinfo.json', $params);
 	}
 
