@@ -64,6 +64,16 @@ class ContextIO {
 	}
 
 	/**
+	 * Returns the 20 contacts with whom the most emails were exchanged.
+	 * @link http://developer.context.io/page/addresses
+	 * @param string $account accountId or email address of the mailbox you want to query
+	 * @return ContextIOResponse
+	 */
+	public function addresses($account) {
+		return $this->get($account, 'addresses.json');
+	}
+
+	/**
 	 * Returns the 25 most recent attachments found in a mailbox. Use limit to change that number.
 	 * @link http://developer.context.io/page/allfiles
 	 * @param string $account accountId or email address of the mailbox you want to query
