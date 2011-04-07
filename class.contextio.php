@@ -65,7 +65,7 @@ class ContextIO {
 
 	/**
 	 * Returns the 20 contacts with whom the most emails were exchanged.
-	 * @link http://context.io/docs/latest/addresses
+	 * @link http://context.io/docs/1.1/addresses
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @return ContextIOResponse
 	 */
@@ -75,7 +75,7 @@ class ContextIO {
 
 	/**
 	 * Returns the 25 most recent attachments found in a mailbox. Use limit to change that number.
-	 * @link http://context.io/docs/latest/allfiles
+	 * @link http://context.io/docs/1.1/allfiles
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: since, limit
 	 * @return ContextIOResponse
@@ -89,7 +89,7 @@ class ContextIO {
 	 * Returns the 25 most recent attachments found in a mailbox. Use limit to change that number.
 	 * This is useful if you're polling a mailbox for new messages and want all new messages
 	 * indexed since a given timestamp.
-	 * @link http://context.io/docs/latest/allmessages
+	 * @link http://context.io/docs/1.1/allmessages
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: since, limit
 	 * @return ContextIOResponse
@@ -103,7 +103,7 @@ class ContextIO {
 	/**
 	 * This call returns the latest attachments exchanged with one
 	 * or more email addresses
-	 * @link http://context.io/docs/latest/contactfiles
+	 * @link http://context.io/docs/1.1/contactfiles
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'email', 'to', 'from', 'cc', 'bcc', 'limit'
 	 * @return ContextIOResponse
@@ -117,7 +117,7 @@ class ContextIO {
 	 * This call returns list of email messages for one or more contacts. Use the email
 	 * parameter to get emails where a contact appears in the recipients or is the sender.
 	 * Use to, from and cc parameters for more precise control.
-	 * @link http://context.io/docs/latest/contactmessages
+	 * @link http://context.io/docs/1.1/contactmessages
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'email', 'to', 'from', 'cc', 'bcc', 'limit'
 	 * @return ContextIOResponse
@@ -130,7 +130,7 @@ class ContextIO {
 	/**
 	 * Given two files, this will return the list of insertions and deletions made
 	 * from the oldest of the two files to the newest one.
-	 * @link http://context.io/docs/latest/diffsummary
+	 * @link http://context.io/docs/1.1/diffsummary
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]string $params Query parameters for the API call: 'fileId1', 'fileId2'
 	 * @return ContextIOResponse
@@ -145,7 +145,7 @@ class ContextIO {
 	 * a file, set $saveAs to the destination file name. If $saveAs is left to null,
 	 * the function will return the file data.
 	 * on the 
-	 * @link http://context.io/docs/latest/downloadfile
+	 * @link http://context.io/docs/1.1/downloadfile
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]string $params Query parameters for the API call: 'fileId'
 	 * @param string $saveAs Path to local file where the attachment should be saved to.
@@ -190,7 +190,7 @@ class ContextIO {
 	/**
 	 * Returns a list of revisions attached to other emails in the 
 	 * mailbox for one or more given files (see fileid parameter below).
-	 * @link http://context.io/docs/latest/filerevisions
+	 * @link http://context.io/docs/1.1/filerevisions
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]string $params Query parameters for the API call: 'fileId', 'fileName'
 	 * @return ContextIOResponse
@@ -204,7 +204,7 @@ class ContextIO {
 	 * Returns a list of files that are related to the given file. 
 	 * Currently, relation between files is based on how similar their names are.
 	 * You must specify either the fileId of fileName parameter
-	 * @link http://context.io/docs/latest/relatedfiles
+	 * @link http://context.io/docs/1.1/relatedfiles
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]string $params Query parameters for the API call: 'fileId', 'fileName'
 	 * @return ContextIOResponse
@@ -216,7 +216,7 @@ class ContextIO {
 
 	/**
 	 * 
-	 * @link http://context.io/docs/latest/filesearch
+	 * @link http://context.io/docs/1.1/filesearch
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]string $params Query parameters for the API call: 'fileName'
 	 * @return ContextIOResponse
@@ -227,7 +227,7 @@ class ContextIO {
 	}
 
 	/**
-	 * @link http://context.io/docs/latest/imap/addaccount
+	 * @link http://context.io/docs/1.1/imap/addaccount
 	 * @param array[string]string $params Query parameters for the API call: 'email', 'server', 'username', 'password', 'usessl', 'port'
 	 * @return ContextIOResponse
 	 */
@@ -238,7 +238,7 @@ class ContextIO {
 
 	/**
 	 * Attempts to discover IMAP settings for a given email address
-	 * @link http://context.io/docs/latest/imap/discover
+	 * @link http://context.io/docs/1.1/imap/discover
 	 * @param mixed $params either a string or assoc array
 	 *    with email as its key
 	 * @return ContextIOResponse
@@ -255,7 +255,7 @@ class ContextIO {
 
 	/**
 	 * Modify the IMAP server settings of an already indexed account
-	 * @link http://context.io/docs/latest/imap/modifyaccount
+	 * @link http://context.io/docs/1.1/imap/modifyaccount
 	 * @param array[string]string $params Query parameters for the API call: 'credentials', 'mailboxes'
 	 * @return ContextIOResponse
 	 */
@@ -266,7 +266,7 @@ class ContextIO {
 
 	/**
 	 * Remove the connection to an IMAP account
-	 * @link http://context.io/docs/latest/imap/removeaccount
+	 * @link http://context.io/docs/1.1/imap/removeaccount
 	 * @return ContextIOResponse
 	 */
 	public function imap_removeAccount($account, $params=array()) {
@@ -278,7 +278,7 @@ class ContextIO {
 	 * When Context.io can't connect to your IMAP server, 
 	 * the IMAP server gets flagged as unavailable in our database. 
 	 * Use this call to re-enable the syncing.
-	 * @link http://context.io/docs/latest/imap/resetstatus
+	 * @link http://context.io/docs/1.1/imap/resetstatus
 	 * @return ContextIOResponse
 	 */
 	public function imap_resetStatus($account, $params=array()) {
@@ -291,7 +291,7 @@ class ContextIO {
 	 * A message can be identified by the value of its Message-ID header
 	 * or by the combination of the date sent timestamp and email address
 	 * of the sender.
-	 * @link http://context.io/docs/latest/messageinfo
+	 * @link http://context.io/docs/1.1/messageinfo
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId', 'from', 'dateSent', 'server', 'mbox', 'uid'
 	 * @return ContextIOResponse
@@ -306,7 +306,7 @@ class ContextIO {
 	 * A message can be identified by the value of its Message-ID header
 	 * or by the combination of the date sent timestamp and email address
 	 * of the sender.
-	 * @link http://context.io/docs/latest/messagetext
+	 * @link http://context.io/docs/1.1/messagetext
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId', 'from', 'dateSent','type
 	 * @return ContextIOResponse
@@ -318,7 +318,7 @@ class ContextIO {
 
 	/**
 	 * Returns message information
-	 * @link http://context.io/docs/latest/search
+	 * @link http://context.io/docs/1.1/search
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'subject', 'limit'
 	 * @return ContextIOResponse
@@ -330,7 +330,7 @@ class ContextIO {
 
 	/**
 	 * Returns message and contact information about a given email thread.
-	 * @link http://context.io/docs/latest/threadinfo
+	 * @link http://context.io/docs/1.1/threadinfo
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]string $params Query parameters for the API call: 'gmailthreadid'
 	 * @return ContextIOResponse
