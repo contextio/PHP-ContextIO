@@ -275,7 +275,7 @@ class ContextIO {
 	}
 
 	/**
-	 * When Context.io can't connect to your IMAP server, 
+	 * When Context.IO can't connect to your IMAP server, 
 	 * the IMAP server gets flagged as unavailable in our database. 
 	 * Use this call to re-enable the syncing.
 	 * @link http://context.io/docs/1.1/imap/resetstatus
