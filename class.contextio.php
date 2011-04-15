@@ -127,6 +127,7 @@ class ContextIO {
 	 */
 	public function diffSummary($account, $params) {
 		$params = $this->_filterParams($params, array('fileid1', 'fileid2'));
+		$params['generate'] = 1;
 		return $this->get($account, 'diffsummary.json', $params);
 	}
 
