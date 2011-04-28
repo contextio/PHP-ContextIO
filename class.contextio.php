@@ -288,6 +288,21 @@ class ContextIO {
 	}
 
 	/**
+	 * Returns the message headers of a message.
+	 * A message can be identified by the value of its Message-ID header
+	 * or by the combination of the date sent timestamp and email address
+	 * of the sender.
+	 * @link http://context.io/docs/1.1/messageheaders
+	 * @param string $account accountId or email address of the mailbox you want to query
+	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId', 'from', 'dateSent',
+	 * @return ContextIOResponse
+	 */
+	public function messageHeaders($account, $params) {
+		$params = $this->_filterParams($params, array('emailmessageid', 'from', 'datesent'));
+		return $this->get($account, 'messageheaders.json', $params);
+	}
+
+	/**
 	 * Returns document and contact information about a message.
 	 * A message can be identified by the value of its Message-ID header
 	 * or by the combination of the date sent timestamp and email address
