@@ -127,6 +127,17 @@ class ContextIO {
 		return $this->get($account, 'contactmessages.json', $params);
 	}
 
+ 	/**
+	 * This call search the lists of contacts.
+	 * @param string $account accountId or email address of the mailbox you want to query
+	 * @param array[string]mixed $params Query parameters for the API call: 'search'
+	 * @return ContextIOResponse
+	 */
+	public function contactSearch($account, $params) {
+		$params = $this->_filterParams($params, array('search'));
+		return $this->get($account, 'contactsearch.json', $params);
+	}
+	
 	/**
 	 * Given two files, this will return the list of insertions and deletions made
 	 * from the oldest of the two files to the newest one.
@@ -225,6 +236,11 @@ class ContextIO {
 	public function fileSearch($account, $params) {
 		$params = $this->_filterParams($params, array('filename'));
 		return $this->get($account, 'filesearch.json', $params);
+	}
+
+	public function imap_accountInfo($params) {
+		$params = $this->_filterParams($params, array('email'));
+		return $this->get(null, 'imap/accountinfo.json', $params);
 	}
 
 	/**
