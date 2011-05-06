@@ -233,7 +233,7 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function imap_addAccount($params) {
-		$params = $this->_filterParams($params, array('email','server','username','password','usessl','port','firstname','lastname'));
+		$params = $this->_filterParams($params, array('email','server','username','oauthconsumername','oauthtoken','oauthtokensecret','password','usessl','port','firstname','lastname'));
 		return $this->get(null, 'imap/addaccount.json', $params);
 	}
 
