@@ -428,7 +428,7 @@ class ContextIO {
 		if (is_array($account)) {
 			$tmp_results = array();
 			foreach ($account as $accnt) {
-				$result = $this->_doCall($accnt, $action, $parameters);
+				$result = $this->_doCall('GET', $accnt, $action, $parameters);
 				if ($result === false) {
 					return false;
 				}
@@ -437,11 +437,15 @@ class ContextIO {
 			return $tmp_results;
 		}
 		else {
-			return $this->_doCall($account, $action, $parameters);
+			return $this->_doCall('GET', $account, $action, $parameters);
 		}
 	}
 
-	protected function _doCall($account, $action, $parameters=null) {
+	protected function post($account, $action, $parameters=null) {
+		return $this->_doCall('POST', $account, $action, $parameters);
+	}
+
+	protected function _doCall($httpMethod, $account, $action, $parameters=null) {
 		$consumer = new OAuthConsumer($this->oauthKey, $this->oauthSecret);
 		if (! is_null($account)) {
 			if (is_null($parameters)) {
@@ -452,13 +456,18 @@ class ContextIO {
 			}
 		}
 		$baseUrl = $this->build_url($action);
-		$req = OAuthRequest::from_consumer_and_token($consumer, null, "GET", $baseUrl, $parameters);
+		$req = OAuthRequest::from_consumer_and_token($consumer, null, $httpMethod, $baseUrl, $parameters);
 		$sig_method = new OAuthSignatureMethod_HMAC_SHA1();
 		$req->sign_request($sig_method, $consumer, null);
 
 		//get data using signed url
 		if ($this->authHeaders) {
-			$curl = curl_init($baseUrl . '?' . OAuthUtil::build_http_query($parameters));
+			if ($httpMethod == 'GET') {
+				$curl = curl_init($baseUrl . '?' . OAuthUtil::build_http_query($parameters));
+			}
+			else {
+				$curl = curl_init($baseUrl);
+			}
 			curl_setopt($curl, CURLOPT_HTTPHEADER, array($req->to_header()));
 		}
 		else {
@@ -468,8 +477,11 @@ class ContextIO {
 		if ($this->ssl) {
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		}
-		
+
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		if ($httpMethod == 'POST') {
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters);
+		}
 		
 		if ($this->saveHeaders) {
 			$this->responseHeaders = array();
