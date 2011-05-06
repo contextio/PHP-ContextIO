@@ -129,6 +129,7 @@ class ContextIO {
 
  	/**
 	 * This call search the lists of contacts.
+	 * @link http://context.io/docs/1.1/contactsearch
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'search'
 	 * @return ContextIOResponse
@@ -238,6 +239,10 @@ class ContextIO {
 		return $this->get($account, 'filesearch.json', $params);
 	}
 
+	/**
+	 *
+	 * @link http://context.io/docs/1.1/imap/accountinfo
+	 */
 	public function imap_accountInfo($params) {
 		$params = $this->_filterParams($params, array('email'));
 		return $this->get(null, 'imap/accountinfo.json', $params);
@@ -245,7 +250,7 @@ class ContextIO {
 
 	/**
 	 * @link http://context.io/docs/1.1/imap/addaccount
-	 * @param array[string]string $params Query parameters for the API call: 'email', 'server', 'username', 'password', 'usessl', 'port'
+	 * @param array[string]string $params Query parameters for the API call: 'email', 'server', 'username', 'password', 'oauthconsumername', 'oauthtoken', 'oauthtokensecret', 'usessl', 'port'
 	 * @return ContextIOResponse
 	 */
 	public function imap_addAccount($params) {
@@ -303,17 +308,29 @@ class ContextIO {
 		return $this->get($account, 'imap/resetstatus.json', $params);
 	}
 
+	/**
+	 *
+	 * @link http://context.io/docs/1.1/imap/oauthproviders
+	 */
 	public function imap_deleteOAuthProvider($params=array()) {
 		$params = $this->_filterParams($params, array('key'));
 		$params['action'] = 'delete';
 		return $this->post(null, 'imap/oauthproviders.json', $params);
 	}
 
+	/**
+	 *
+	 * @link http://context.io/docs/1.1/imap/oauthproviders
+	 */
 	public function imap_setOAuthProvider($params=array()) {
 		$params = $this->_filterParams($params, array('type','key','secret'));
 		return $this->post(null, 'imap/oauthproviders.json', $params);
 	}
 
+	/**
+	 *
+	 * @link http://context.io/docs/1.1/imap/oauthproviders
+	 */
 	public function imap_getOAuthProviders($params=array()) {
 		$params = $this->_filterParams($params, array('key'));
 		return $this->get(null, 'imap/oauthproviders.json', $params);
