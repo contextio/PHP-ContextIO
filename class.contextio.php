@@ -303,6 +303,22 @@ class ContextIO {
 		return $this->get($account, 'imap/resetstatus.json', $params);
 	}
 
+	public function imap_deleteOAuthProvider($params=array()) {
+		$params = $this->_filterParams($params, array('key'));
+		$params['action'] = 'delete';
+		return $this->post(null, 'imap/oauthproviders.json', $params);
+	}
+
+	public function imap_setOAuthProvider($params=array()) {
+		$params = $this->_filterParams($params, array('type','key','secret'));
+		return $this->post(null, 'imap/oauthproviders.json', $params);
+	}
+
+	public function imap_getOAuthProviders($params=array()) {
+		$params = $this->_filterParams($params, array('key'));
+		return $this->get(null, 'imap/oauthproviders.json', $params);
+	}
+
 	/**
 	 * Returns the message headers of a message.
 	 * A message can be identified by the value of its Message-ID header
