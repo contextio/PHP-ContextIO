@@ -244,7 +244,7 @@ class ContextIO {
 	 * @link http://context.io/docs/1.1/imap/accountinfo
 	 */
 	public function imap_accountInfo($params) {
-		$params = $this->_filterParams($params, array('email'));
+		$params = $this->_filterParams($params, array('email','userid'));
 		return $this->get(null, 'imap/accountinfo.json', $params);
 	}
 
