@@ -745,14 +745,17 @@ class ContextIO {
 	}
 
 	protected function put($account, $action, $parameters=null) {
+		$this->authHeaders = false;
 		return $this->_doCall('PUT', $account, $action, $parameters);
 	}
 
 	protected function post($account, $action, $parameters=null) {
+		$this->authHeaders = false;
 		return $this->_doCall('POST', $account, $action, $parameters);
 	}
 
 	protected function delete($account, $action, $parameters=null) {
+		$this->authHeaders = false;
 		return $this->_doCall('DELETE', $account, $action, $parameters);
 	}
 
