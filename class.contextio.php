@@ -232,7 +232,7 @@ class ContextIO {
 
 		//get data using signed url
 		if ($this->authHeaders) {
-			$curl = curl_init($baseUrl . '?' . OAuthUtil::build_http_query($params));
+			$curl = curl_init($baseUrl);
 			curl_setopt($curl, CURLOPT_HTTPHEADER, array($req->to_header()));
 		}
 		else {
