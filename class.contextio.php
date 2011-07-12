@@ -480,32 +480,6 @@ class ContextIO {
 		return $this->get(null, 'apikeyinfo.json');
 	}
 
-	/**
-	 * Given two files, this will return the list of insertions and deletions made
-	 * from the oldest of the two files to the newest one.
-	 * @link http://context.io/docs/2.0/accounts/files/changes
-	 * @param string $account accountId or email address of the mailbox you want to query
-	 * @param array[string]string $params Query parameters for the API call: 'fileId1', 'fileId2'
-	 * @return ContextIOResponse
-	 */
-	public function getFileChanges($account, $params) {
-		$params = $this->_filterParams($params, array('fileid1', 'fileid2'));
-		$params['generate'] = 1;
-		return $this->get($account, 'diffsummary.json', $params);
-	}
-
-	/**
-	 * 
-	 * @link http://context.io/docs/1.1/filesearch
-	 * @param string $account accountId or email address of the mailbox you want to query
-	 * @param array[string]string $params Query parameters for the API call: 'fileName'
-	 * @return ContextIOResponse
-	 */
-	public function fileSearch($account, $params) {
-		$params = $this->_filterParams($params, array('file_name'));
-		return $this->get($account, 'filesearch.json', $params);
-	}
-
 	public function addAccount($params) {
 		$params = $this->_filterParams($params, array('email','first_name','last_name'));
 		return $this->post(null, 'accounts', $params);
