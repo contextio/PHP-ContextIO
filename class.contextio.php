@@ -272,6 +272,20 @@ class ContextIO {
 	}
 
 	/**
+	 * Given two files, this will return the list of insertions and deletions made
+	 * from the oldest of the two files to the newest one.
+	 * @link http://context.io/docs/2.0/accounts/files/changes
+	 * @param string $account accountId or email address of the mailbox you want to query
+	 * @param array[string]string $params Query parameters for the API call: 'fileId1', 'fileId2'
+	 * @return ContextIOResponse
+	 */
+	public function getFileChanges($account, $params) {
+		$params = $this->_filterParams($params, array('fileid1', 'fileid2'));
+		$params['generate'] = 1;
+		return $this->get($account, 'diffsummary.json', $params);
+	}
+
+	/**
 	 * Returns a list of revisions attached to other emails in the 
 	 * mailbox for one or more given files (see fileid parameter below).
 	 * @link http://context.io/docs/2.0/accounts/files/revisions
