@@ -443,6 +443,21 @@ class ContextIO {
 	}
 
 	/**
+	 * Returns message and contact information about a given email thread.
+	 * @link http://context.io/docs/2.0/accounts/messages/thread
+	 * @param string $account accountId or email address of the mailbox you want to query
+	 * @param array[string]string $params Query parameters for the API call: 'email_message_id'
+	 * @return ContextIOResponse
+	 */
+	public function getMessageThread($account, $params) {
+		$params = $this->_filterParams($params, array('email_message_id'));
+		if (! array_key_exists('email_message_id', $params)) {
+			throw new InvalidArgumentException('email_message_id is required hash keys');
+		}
+		return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread');
+	}
+
+	/**
 	 * Returns list of threads
 	 * @link http://context.io/docs/2.0/accounts/threads
 	 * @param string $account accountId or email address of the mailbox you want to query
