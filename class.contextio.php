@@ -411,7 +411,7 @@ class ContextIO {
 	/**
 	 * Returns the message flags of a message.
 	 * A message can be identified by the value of its Message-ID header
-	 * @link http://context.io/docs/2.0/accounts/messages
+	 * @link http://context.io/docs/2.0/accounts/messages/flags
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId'
 	 * @return ContextIOResponse
@@ -429,7 +429,7 @@ class ContextIO {
 	 * A message can be identified by the value of its Message-ID header
 	 * or by the combination of the date sent timestamp and email address
 	 * of the sender.
-	 * @link http://context.io/docs/2.0/accounts/messages
+	 * @link http://context.io/docs/2.0/accounts/messages/body
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId', 'from', 'dateSent','type
 	 * @return ContextIOResponse
@@ -442,6 +442,14 @@ class ContextIO {
 		return $this->get($account, 'messages/' . $params['email_message_id'] . '/body', $params);
 	}
 
+	/**
+	 * Returns list of threads
+	 * @link http://context.io/docs/2.0/accounts/threads
+	 * @param string $account accountId or email address of the mailbox you want to query
+	 * @param array[string]string $params Query parameters for the API call: 'gmailthreadid'
+	 * @return ContextIOResponse
+	 */
+
 	public function listThreads($account, $params=null) {
 		if (is_array($params)) $params = $this->_filterParams($params, array('subject', 'indexed_after', 'active_after', 'active_before', 'limit', 'started_before', 'started_after', 'offset','email', 'to','from','cc','bcc'));
 		return $this->get($account, 'threads', $params);
@@ -449,7 +457,7 @@ class ContextIO {
 
 	/**
 	 * Returns message and contact information about a given email thread.
-	 * @link http://context.io/docs/1.1/threadinfo
+	 * @link http://context.io/docs/2.0/accounts/threads
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]string $params Query parameters for the API call: 'gmailthreadid'
 	 * @return ContextIOResponse
