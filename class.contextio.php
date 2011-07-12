@@ -60,7 +60,7 @@ class ContextIO {
 		$this->endPoint = 'api-preview.context.io';
 		$this->apiVersion = '2.0';
 		$this->lastResponse = null;
-		$this->authHeaders = false;
+		$this->authHeaders = true;
 	}
 
 	/**
@@ -688,7 +688,7 @@ class ContextIO {
 	 * @param bool $authHeadersOn Set to true to use HTTP Authorization headers, false to use URL query params
 	 */
 	public function useAuthorizationHeaders($authHeadersOn = true) {
-		$this->authHeaders = (is_bool($authHeadersOn)) ? $authHeadersOn : true;;
+		$this->authHeaders = (is_bool($authHeadersOn)) ? $authHeadersOn : true;
 	}
 
 	/**
