@@ -39,7 +39,7 @@ class ContextIOResponse {
 	protected $hasError;
 
 	function __construct($httpCode, $requestHeaders, $responseHeaders, $contentType, $rawResponse) {
-		$this->httpCode = $httpCode;
+		$this->httpCode = (int)$httpCode;
 		$this->contentType = $contentType;
 		$this->rawResponse = $rawResponse;
 		$this->rawResponseHeaders = (is_array($responseHeaders)) ? $responseHeaders : false;
@@ -100,18 +100,14 @@ class ContextIOResponse {
 	}
 
 	private function _decodeResponse() {
-		if ($this->httpCode != '200') {
-			$this->hasError = true;
-			return;
-		}
 		if ($this->contentType != 'application/json') {
 			$this->hasError = true;
 			return;
 		}
-		$this->decodedResponse = json_decode($this->rawResponse, true);
-		if (array_key_exists('messages', $this->decodedResponse) && (count($this->decodedResponse['messages']) > 0)) {
+		if (! (($this->httpCode >= 200) && ($this->httpCode < 400))) {
 			$this->hasError = true;
 		}
+		$this->decodedResponse = json_decode($this->rawResponse, true);
 	}
 
 	public function getRawResponse() {
@@ -138,20 +134,8 @@ class ContextIOResponse {
 		return $this->httpCode;
 	}
 
-	public function getSystem() {
-		return $this->decodedResponse['system'];
-	}
-
-	public function getTimestamp() {
-		return $this->decodedResponse['timestamp'];
-	}
-
-	public function getMessages() {
-		return $this->decodedResponse['messages'];
-	}
-
 	public function getData() {
-		return $this->decodedResponse['data'];
+		return $this->decodedResponse;
 	}
 
 	public function hasError() {
