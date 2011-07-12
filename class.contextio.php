@@ -293,7 +293,7 @@ class ContextIO {
 	 * @param array[string]string $params Query parameters for the API call: 'fileId', 'fileName'
 	 * @return ContextIOResponse
 	 */
-	public function getFileRevisions($account, $params) {
+	public function listFileRevisions($account, $params) {
 		if (is_string($params)) {
 			$params = array('file_id' =>$params);
 		}
@@ -315,7 +315,7 @@ class ContextIO {
 	 * @param array[string]string $params Query parameters for the API call: 'fileId', 'fileName'
 	 * @return ContextIOResponse
 	 */
-	public function getFileRelated($account, $params) {
+	public function listFileRelated($account, $params) {
 		if (is_string($params)) {
 			$params = array('file_id' =>$params);
 		}
@@ -369,12 +369,12 @@ class ContextIO {
 	/**
 	 * Returns the message headers of a message.
 	 * A message can be identified by the value of its Message-ID header
-	 * @link http://context.io/docs/2.0/accounts/messages
+	 * @link http://context.io/docs/2.0/accounts/messages/headers
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId'
 	 * @return ContextIOResponse
 	 */
-	public function messageHeaders($account, $params) {
+	public function getMessageHeaders($account, $params) {
 		if (is_string($params)) {
 			$params = array('email_message_id' =>$params);
 		}
@@ -390,12 +390,12 @@ class ContextIO {
 	/**
 	 * Returns the message flags of a message.
 	 * A message can be identified by the value of its Message-ID header
-	 * @link http://context.io/docs/2.0/accounts/messages
+	 * @link http://context.io/docs/2.0/accounts/messages/flags
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId'
 	 * @return ContextIOResponse
 	 */
-	public function messageFlags($account, $params) {
+	public function getMessageFlags($account, $params) {
 		if (is_string($params)) {
 			$params = array('email_message_id' =>$params);
 		}
@@ -434,7 +434,7 @@ class ContextIO {
 	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId', 'from', 'dateSent','type
 	 * @return ContextIOResponse
 	 */
-	public function messageText($account, $params) {
+	public function getMessageBody($account, $params) {
 		$params = $this->_filterParams($params, array('email_message_id', 'type'));
 		if (! array_key_exists('email_message_id', $params)) {
 			throw new InvalidArgumentException('email_message_id is a required hash key');
