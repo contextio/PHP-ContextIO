@@ -160,7 +160,7 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function listContactFiles($account, $params) {
-		$params = $this->_filterParams($params, array('email','limit','offset','scope'));
+		$params = $this->_filterParams($params, array('email','limit','offset','scope','group_by_revisions'));
 		return $this->get($account, 'contacts/' . $params['email'] . '/files', $params);
 	}
 
