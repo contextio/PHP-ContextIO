@@ -179,6 +179,7 @@ class ContextIO {
 		return $this->get($account, 'contacts/' . $params['email'] . '/messages', $params);
 	}
 
+	/*
 	public function listContactThreads($account, $params) {
 		$params = $this->_filterParams($params, array('email','limit','offset','scope'));
 		if (! array_key_exists('email', $params)) {
@@ -186,6 +187,7 @@ class ContextIO {
 		}
 		return $this->get($account, 'contacts/' . $params['email'] . '/threads', $params);
 	}
+	 */
 
 	/**
 	 * @link http://context.io/docs/2.0/accounts/files
@@ -473,11 +475,12 @@ class ContextIO {
 	 * @param array[string]string $params Query parameters for the API call: 'gmailthreadid'
 	 * @return ContextIOResponse
 	 */
-
+	/*
 	public function listThreads($account, $params=null) {
 		if (is_array($params)) $params = $this->_filterParams($params, array('subject', 'indexed_after', 'active_after', 'active_before', 'limit', 'started_before', 'started_after', 'offset','email', 'to','from','cc','bcc'));
 		return $this->get($account, 'threads', $params);
 	}
+	 */
 
 	/**
 	 * Returns message and contact information about a given email thread.
