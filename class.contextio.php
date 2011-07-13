@@ -161,6 +161,9 @@ class ContextIO {
 	 */
 	public function listContactFiles($account, $params) {
 		$params = $this->_filterParams($params, array('email','limit','offset','scope','group_by_revisions'));
+		if (! array_key_exists('email', $params)) {
+			throw new InvalidArgumentException('email is a required hash key');
+		}
 		return $this->get($account, 'contacts/' . $params['email'] . '/files', $params);
 	}
 
@@ -170,11 +173,17 @@ class ContextIO {
 	 */
 	public function listContactMessages($account, $params) {
 		$params = $this->_filterParams($params, array('email','limit','offset','scope'));
+		if (! array_key_exists('email', $params)) {
+			throw new InvalidArgumentException('email is a required hash key');
+		}
 		return $this->get($account, 'contacts/' . $params['email'] . '/messages', $params);
 	}
 
 	public function listContactThreads($account, $params) {
 		$params = $this->_filterParams($params, array('email','limit','offset','scope'));
+		if (! array_key_exists('email', $params)) {
+			throw new InvalidArgumentException('email is a required hash key');
+		}
 		return $this->get($account, 'contacts/' . $params['email'] . '/threads', $params);
 	}
 
