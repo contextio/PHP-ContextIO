@@ -593,7 +593,7 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account)) {
 			throw new InvalidArgumentException('account must be string');
 		}
-		if (is_array($params)) $params = $this->_filterParams($params, array('subject', 'indexed_after', 'active_after', 'active_before', 'limit', 'offset','email', 'to','from','cc','bcc'));
+		if (is_array($params)) $params = $this->_filterParams($params, array('subject', 'indexed_after', 'active_after', 'active_before', 'started_after', 'started_before', 'limit', 'offset','email', 'to','from','cc','bcc'));
 		return $this->get($account, 'threads', $params);
 	}
 
