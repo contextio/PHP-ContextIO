@@ -9,7 +9,6 @@ http://context.io for more information regarding Context.IO.
 REQUIREMENTS
 
 PHP Curl (http://php.net/curl)
-PHP OAuth.php (http://oauth.googlecode.com/svn/code/php/)
 
 
 INSTALLATION
