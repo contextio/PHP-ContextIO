@@ -261,10 +261,10 @@ class ContextIO {
 			}
 		}
 
-		$consumer = new OAuthConsumer($this->oauthKey, $this->oauthSecret);
+		$consumer = new ContextIOExtLib\OAuthConsumer($this->oauthKey, $this->oauthSecret);
 		$baseUrl = $this->build_url('accounts/' . $account . '/files/' . $params['file_id'] . '/content');
-		$req = OAuthRequest::from_consumer_and_token($consumer, null, "GET", $baseUrl);
-		$sig_method = new OAuthSignatureMethod_HMAC_SHA1();
+		$req = ContextIOExtLib\OAuthRequest::from_consumer_and_token($consumer, null, "GET", $baseUrl);
+		$sig_method = new ContextIOExtLib\OAuthSignatureMethod_HMAC_SHA1();
 		$req->sign_request($sig_method, $consumer, null);
 
 		//get data using signed url
@@ -947,19 +947,19 @@ class ContextIO {
 	}
 
 	protected function _doCall($httpMethod, $account, $action, $parameters=null) {
-		$consumer = new OAuthConsumer($this->oauthKey, $this->oauthSecret);
+		$consumer = new ContextIOExtLib\OAuthConsumer($this->oauthKey, $this->oauthSecret);
 		if (! is_null($account)) {
 			$action = 'accounts/' . $account . '/' . $action;
 		}
 		$baseUrl = $this->build_url($action);
-		$req = OAuthRequest::from_consumer_and_token($consumer, null, $httpMethod, $baseUrl, $parameters);
-		$sig_method = new OAuthSignatureMethod_HMAC_SHA1();
+		$req = ContextIOExtLib\OAuthRequest::from_consumer_and_token($consumer, null, $httpMethod, $baseUrl, $parameters);
+		$sig_method = new ContextIOExtLib\OAuthSignatureMethod_HMAC_SHA1();
 		$req->sign_request($sig_method, $consumer, null);
 
 		//get data using signed url
 		if ($this->authHeaders) {
 			if ($httpMethod == 'GET') {
-				$curl = curl_init((is_null($parameters) || count($parameters) == 0) ? $baseUrl : $baseUrl. '?' . OAuthUtil::build_http_query($parameters));
+				$curl = curl_init((is_null($parameters) || count($parameters) == 0) ? $baseUrl : $baseUrl. '?' . ContextIOExtLib\OAuthUtil::build_http_query($parameters));
 			}
 			else {
 				$curl = curl_init($baseUrl);

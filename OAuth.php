@@ -1,4 +1,5 @@
 <?php
+namespace ContextIOExtLib;
 // vim: foldmethod=marker
 
 /* original source: http://oauth.googlecode.com/svn/code/php/ */
@@ -31,7 +32,7 @@
 
 /* Generic exception class
  */
-class OAuthException extends Exception {
+class OAuthException extends \Exception {
   // pass
 }
 
@@ -746,7 +747,7 @@ class OAuthDataStore {
 class OAuthUtil {
   public static function urlencode_rfc3986($input) {
   if (is_array($input)) {
-    return array_map(array('OAuthUtil', 'urlencode_rfc3986'), $input);
+    return array_map(array('ContextIOExtLib\OAuthUtil', 'urlencode_rfc3986'), $input);
   } else if (is_scalar($input)) {
     return str_replace(
       '+',
