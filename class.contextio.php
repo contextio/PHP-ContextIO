@@ -410,7 +410,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string');
 		}
 		if (is_string($params)) {
-			if (substr($params,0,1) == '<') {
+			if ((substr($params,0,1) == '<') || (substr($params,0,3) == 'gm-')) {
 				return $this->get($account, 'messages/' . $params);
 			}
 			else {
@@ -444,7 +444,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string');
 		}
 		if (is_string($params)) {
-			if (substr($params,0,1) == '<') {
+			if ((substr($params,0,1) == '<') || (substr($params,0,3) == 'gm-')) {
 				return $this->get($account, 'messages/' . $params . '/headers');
 			}
 			else {
@@ -478,7 +478,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string');
 		}
 		if (is_string($params)) {
-			if (substr($params,0,1) == '<') {
+			if ((substr($params,0,1) == '<') || (substr($params,0,3) == 'gm-')) {
 				return $this->get($account, 'messages/' . $params . '/flags');
 			}
 			else {
@@ -544,7 +544,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string');
 		}
 		if (is_string($params)) {
-			if (substr($params,0,1) == '<') {
+			if ((substr($params,0,1) == '<') || (substr($params,0,3) == 'gm-')) {
 				return $this->get($account, 'messages/' . $params . '/body');
 			}
 			else {
@@ -578,7 +578,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string');
 		}
 		if (is_string($params)) {
-			if (substr($params,0,1) == '<') {
+			if ((substr($params,0,1) == '<') || (substr($params,0,3) == 'gm-')) {
 				return $this->get($account, 'messages/' . $params . '/thread');
 			}
 			else {
