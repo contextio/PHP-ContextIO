@@ -410,12 +410,10 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string');
 		}
 		if (is_string($params)) {
-			if ((substr($params,0,1) == '<') || (substr($params,0,3) == 'gm-')) {
-				return $this->get($account, 'messages/' . $params);
-			}
-			else {
-				return $this->get($account, 'messages/gm-' . $params);
-			}
+			return $this->get($account, 'messages/' . $params);
+		}
+		elseif (array_key_exists('message_id', $params)) {
+			return $this->get($account, 'messages/' . $params['message_id']);
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['email_message_id']);
@@ -427,7 +425,7 @@ class ContextIO {
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id']);
 		}
 		else {
-			throw new InvalidArgumentException('email_message_id or gmail_message_id is a required hash key');
+			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
 		}
 	}
 
@@ -444,12 +442,10 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string');
 		}
 		if (is_string($params)) {
-			if ((substr($params,0,1) == '<') || (substr($params,0,3) == 'gm-')) {
-				return $this->get($account, 'messages/' . $params . '/headers');
-			}
-			else {
-				return $this->get($account, 'messages/gm-' . $params . '/headers');
-			}
+			return $this->get($account, 'messages/' . $params . '/headers');
+		}
+		elseif (array_key_exists('message_id', $params)) {
+			return $this->get($account, 'messages/' . $params['message_id']. '/headers');
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['email_message_id']. '/headers');
@@ -461,7 +457,7 @@ class ContextIO {
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/headers');
 		}
 		else {
-			throw new InvalidArgumentException('email_message_id or gmail_message_id is a required hash key');
+			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
 		}
 	}
 
@@ -478,12 +474,10 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string');
 		}
 		if (is_string($params)) {
-			if ((substr($params,0,1) == '<') || (substr($params,0,3) == 'gm-')) {
-				return $this->get($account, 'messages/' . $params . '/flags');
-			}
-			else {
-				return $this->get($account, 'messages/gm-' . $params . '/flags');
-			}
+			return $this->get($account, 'messages/' . $params . '/flags');
+		}
+		elseif (array_key_exists('message_id', $params)) {
+			return $this->get($account, 'messages/' . $params['message_id']. '/flags');
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['email_message_id']. '/flags');
@@ -495,7 +489,7 @@ class ContextIO {
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/flags');
 		}
 		else {
-			throw new InvalidArgumentException('email_message_id or gmail_message_id is a required hash key');
+			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
 		}
 	}
 
@@ -511,12 +505,15 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account)) {
 			throw new InvalidArgumentException('account must be string');
 		}
-		$params = $this->_filterParams($params, array('email_message_id', 'gmail_message_id', 'flags'));
+		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'flags'));
 		if (! array_key_exists('flags', $params)) {
 			throw new InvalidArgumentException('flags is a required hash key');
 		}
 		if (array_key_exists('email_message_id', $params)) {
 			return $this->put($account, 'messages/' . $params['email_message_id'] . '/flags', array('flags' => serialize($params['flags'])));
+		}
+		elseif (array_key_exists('message_id', $params)) {
+			return $this->put($account, 'messages/' . $params['message_id'] . '/flags', array('flags' => serialize($params['flags'])));
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -525,7 +522,7 @@ class ContextIO {
 			return $this->put($account, 'messages/gm-' . $params['gmail_message_id'] . '/flags', array('flags' => serialize($params['flags'])));
 		}
 		else {
-			throw new InvalidArgumentException('email_message_id or gmail_message_id is a required hash key');
+			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
 		}
 	}
 
@@ -544,16 +541,14 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string');
 		}
 		if (is_string($params)) {
-			if ((substr($params,0,1) == '<') || (substr($params,0,3) == 'gm-')) {
-				return $this->get($account, 'messages/' . $params . '/body');
-			}
-			else {
-				return $this->get($account, 'messages/gm-' . $params . '/body');
-			}
+			return $this->get($account, 'messages/' . $params . '/body');
 		}
-		$params = $this->_filterParams($params, array('email_message_id', 'gmail_message_id', 'type'));
+		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'type'));
 		if (array_key_exists('email_message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['email_message_id'] . '/body', $params);
+		}
+		elseif (array_key_exists('message_id', $params)) {
+			return $this->get($account, 'messages/' . $params['message_id'] . '/body', $params);
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -562,7 +557,7 @@ class ContextIO {
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/body', $params);
 		}
 		else {
-			throw new InvalidArgumentException('email_message_id or gmail_message_id is a required hash key');
+			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
 		}
 	}
 
@@ -578,16 +573,14 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string');
 		}
 		if (is_string($params)) {
-			if ((substr($params,0,1) == '<') || (substr($params,0,3) == 'gm-')) {
-				return $this->get($account, 'messages/' . $params . '/thread');
-			}
-			else {
-				return $this->get($account, 'messages/gm-' . $params . '/thread');
-			}
+			return $this->get($account, 'messages/' . $params . '/thread');
 		}
-		$params = $this->_filterParams($params, array('email_message_id', 'gmail_message_id'));
+		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id'));
 		if (array_key_exists('email_message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread');
+		}
+		elseif (array_key_exists('message_id', $params)) {
+			return $this->get($account, 'messages/' . $params['message_id'] . '/thread');
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -596,7 +589,7 @@ class ContextIO {
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/thread');
 		}
 		else {
-			throw new InvalidArgumentException('email_message_id or gmail_message_id is a required hash key');
+			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
 		}
 	}
 
@@ -626,9 +619,12 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account)) {
 			throw new InvalidArgumentException('account must be string');
 		}
-		$params = $this->_filterParams($params, array('gmail_thread_id','gmail_message_id','email_message_id'));
+		$params = $this->_filterParams($params, array('message_id', 'gmail_thread_id','gmail_message_id','email_message_id'));
 		if (array_key_exists('email_message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread');
+		}
+		elseif (array_key_exists('message_id', $params)) {
+			return $this->get($account, 'messages/' . $params['message_id'] . '/thread');
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -643,7 +639,7 @@ class ContextIO {
 			return $this->get($account, 'threads/gm-' . $params['gmail_thread_id']);
 		}
 		else {
-			throw new InvalidArgumentException('gmail_thread_id or email_message_id or gmail_message_id are required hash keys');
+			throw new InvalidArgumentException('gmail_thread_id, messageId, email_message_id or gmail_message_id are required hash keys');
 		}
 	}
 
