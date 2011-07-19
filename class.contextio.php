@@ -421,6 +421,9 @@ class ContextIO {
 			return $this->get($account, 'messages/' . $params['email_message_id']);
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
+			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+				return $this->get($account, 'messages/' . $params['gmail_message_id']);
+			}
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id']);
 		}
 		else {
@@ -452,6 +455,9 @@ class ContextIO {
 			return $this->get($account, 'messages/' . $params['email_message_id']. '/headers');
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
+			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/headers');
+			}
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/headers');
 		}
 		else {
@@ -483,6 +489,9 @@ class ContextIO {
 			return $this->get($account, 'messages/' . $params['email_message_id']. '/flags');
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
+			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/flags');
+			}
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/flags');
 		}
 		else {
@@ -510,6 +519,9 @@ class ContextIO {
 			return $this->put($account, 'messages/' . $params['email_message_id'] . '/flags', array('flags' => serialize($params['flags'])));
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
+			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+				return $this->put($account, 'messages/' . $params['gmail_message_id'] . '/flags', array('flags' => serialize($params['flags'])));
+			}
 			return $this->put($account, 'messages/gm-' . $params['gmail_message_id'] . '/flags', array('flags' => serialize($params['flags'])));
 		}
 		else {
@@ -544,6 +556,9 @@ class ContextIO {
 			return $this->get($account, 'messages/' . $params['email_message_id'] . '/body', $params);
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
+			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/body', $params);
+			}
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/body', $params);
 		}
 		else {
@@ -575,6 +590,9 @@ class ContextIO {
 			return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread');
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
+			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/thread');
+			}
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/thread');
 		}
 		else {
@@ -613,9 +631,15 @@ class ContextIO {
 			return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread');
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
+			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/thread');
+			}
 			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/thread');
 		}
 		elseif (array_key_exists('gmail_thread_id', $params)) {
+			if (substr($params['gmail_thread_id'],0,3) == 'gm-') {
+				return $this->get($account, 'threads/' . $params['gmail_thread_id']);
+			}
 			return $this->get($account, 'threads/gm-' . $params['gmail_thread_id']);
 		}
 		else {
