@@ -417,11 +417,25 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('label','dst_folder','src_folder','src_uid'), array('label','dst_folder','src_folder','src_uid'));
+		$params = $this->_filterParams($params, array('label','dst_folder','src_folder','src_uid','src_file'), array('label','dst_folder'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
-		return $this->post($account, 'messages', $params);
+		if (array_key_exists('src_folder', $params) && array_key_exists('src_uid', $params)) {
+			return $this->post($account, 'messages', $params);
+		}
+		elseif (array_key_exists('src_file', $params)) {
+			$params['src_file'] == realpath($params['src_file']);
+			if (($params['src_file'] === false) || !is_readable($params['src_file'])) {
+				throw new InvalidArgumentException("invalid source file");
+			}
+			$params['message'] = '@' . $params['src_file'];
+			unset($params['src_file']);
+			return $this->post($account, 'messages', $params);
+		}
+		else {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 	}
 
 	/**
