@@ -138,16 +138,16 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function listContacts($account, $params=null) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) $params = $this->_filterParams($params, array('active_after','active_before','limit','offset','search'));
 		return $this->get($account, 'contacts', $params);
 	}
 
 	public function getContact($account, $params=array()) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('email' => $params);
@@ -166,8 +166,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function listContactFiles($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('email','limit','offset','scope','group_by_revisions'));
 		if (! array_key_exists('email', $params)) {
@@ -181,8 +181,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function listContactMessages($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('email','limit','offset','scope'));
 		if (! array_key_exists('email', $params)) {
@@ -196,8 +196,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function listContactThreads($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('email','limit','offset','scope'));
 		if (! array_key_exists('email', $params)) {
@@ -213,16 +213,16 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function listFiles($account, $params=null) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) $params = $this->_filterParams($params, array('indexed_after','date_before','date_after','name','limit', 'offset', 'email', 'to','from','cc','bcc','group_by_revisions'));
 		return $this->get($account, 'files', $params);
 	}
 
 	public function getFile($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('file_id' =>$params);
@@ -248,8 +248,8 @@ class ContextIO {
 	 * @return mixed
 	 */
 	public function getFileContent($account, $params, $saveAs=null) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('file_id' =>$params);
@@ -317,8 +317,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function getFileChanges($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('fileid1', 'fileid2'));
 		$params['generate'] = 1;
@@ -334,8 +334,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function listFileRevisions($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('file_id' =>$params);
@@ -359,8 +359,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function listFileRelated($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('file_id' =>$params);
@@ -382,16 +382,16 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function listMessages($account, $params=null) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) $params = $this->_filterParams($params, array('subject', 'date_before', 'date_after', 'indexed_after', 'limit', 'offset','email', 'to','from','cc','bcc','email_message_id','type','include_body'));
 		return $this->get($account, 'messages', $params);
 	}
 
 	public function addMessageToFolder($account, $params=array()) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('label','dst_folder','src_folder','src_uid'));
 		return $this->post($account, 'messages', $params);
@@ -406,8 +406,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function getMessage($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			return $this->get($account, 'messages/' . $params);
@@ -438,8 +438,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function getMessageHeaders($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			return $this->get($account, 'messages/' . $params . '/headers');
@@ -470,8 +470,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function getMessageFlags($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			return $this->get($account, 'messages/' . $params . '/flags');
@@ -502,8 +502,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function setMessageFlags($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'flags'));
 		if (! array_key_exists('flags', $params)) {
@@ -537,8 +537,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function getMessageBody($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			return $this->get($account, 'messages/' . $params . '/body');
@@ -569,8 +569,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function getMessageThread($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			return $this->get($account, 'messages/' . $params . '/thread');
@@ -601,8 +601,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function listThreads($account, $params=null) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) $params = $this->_filterParams($params, array('subject', 'indexed_after', 'active_after', 'active_before', 'started_after', 'started_before', 'limit', 'offset','email', 'to','from','cc','bcc'));
 		return $this->get($account, 'threads', $params);
@@ -616,8 +616,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function getThread($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('message_id', 'gmail_thread_id','gmail_message_id','email_message_id'));
 		if (array_key_exists('email_message_id', $params)) {
@@ -654,30 +654,30 @@ class ContextIO {
 	}
 
 	public function modifyAccount($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('first_name','last_name'));
 		return $this->put($account, '', $params);
 	}
 
 	public function getAccount($account) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		return $this->get($account);
 	}
 
 	public function listAccountEmailAddresses($account) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		return $this->get($account, 'email_addresses');
 	}
 
 	public function addEmailAddressToAccount($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('email_address'));
 		return $this->post($account, 'email_addresses', $params);
@@ -695,8 +695,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function modifySource($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('credentials', 'label', 'mailboxes', 'service_level'));
 		if (! array_key_exists('label', $params)) {
@@ -706,8 +706,8 @@ class ContextIO {
 	}
 
 	public function resetSourceStatus($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('label' => $params);
@@ -722,15 +722,15 @@ class ContextIO {
 	}
 
 	public function listSources($account) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		return $this->get($account, 'sources');
 	}
 
 	public function getSource($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('label' => $params);
@@ -750,8 +750,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function addSource($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('type','email','server','username','oauth_consumer_key','oauth_token','oauth_token_secret','service_level','password','use_ssl','port'));
 		if (! array_key_exists('type', $params)) {
@@ -766,8 +766,8 @@ class ContextIO {
 	 * @return ContextIOResponse
 	 */
 	public function deleteSource($account, $params=array()) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('label' => $params);
@@ -782,8 +782,8 @@ class ContextIO {
 	}
 
 	public function syncSource($account, $params=array()) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('label'));
 		if ($params == array()) {
@@ -793,8 +793,8 @@ class ContextIO {
 	}
 
 	public function getSync($account, $params=array()) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('label'));
 		if ($params == array()) {
@@ -804,8 +804,8 @@ class ContextIO {
 	}
 
 	public function addFolderToSource($account, $params=array()) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('label','folder'));
 		if (! array_key_exists('label', $params) || ! array_key_exists('folder', $params)) {
@@ -815,8 +815,8 @@ class ContextIO {
 	}
 
 	public function listSourceFolders($account, $params=array()) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('label' => $params);
@@ -831,15 +831,15 @@ class ContextIO {
 	}
 
 	public function listWebhooks($account) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		return $this->get($account, 'webhooks');
 	}
 
 	public function getWebhook($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('webhook_id' => $params);
@@ -854,16 +854,16 @@ class ContextIO {
 	}
 
 	public function addWebhook($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('filter_to', 'filter_from', 'filter_cc', 'filter_subject', 'filter_thread', 'filter_new_important', 'filter_file', 'filter_file_revisions', 'delay', 'callback_url', 'failure_notif_url','filter_folder_added'));
 		return $this->post($account, 'webhooks/', $params);
 	}
 
 	public function deleteWebhook($account, $params) {
-		if (is_null($account) || ! is_string($account)) {
-			throw new InvalidArgumentException('account must be string');
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
 			$params = array('webhook_id' => $params);
