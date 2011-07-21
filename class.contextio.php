@@ -75,7 +75,10 @@ class ContextIO {
 			$params = array('email' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('email'));
+			$params = $this->_filterParams($params, array('email'), array('email'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+			}
 		}
 		return $this->get(null, 'discovery?source=imap&email=' . $params['email']);
 	}
@@ -97,9 +100,9 @@ class ContextIO {
 			$params = array('consumer_key' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('consumer_key'));
-			if (! array_key_exists('consumer_key', $params)) {
-				throw new InvalidArgumentException('consumer_key is a required hash key');
+			$params = $this->_filterParams($params, array('consumer_key'), array('consumer_key'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->get(null, 'oauth_providers/' . $params['consumer_key']);
@@ -110,7 +113,10 @@ class ContextIO {
 	 * @link http://context.io/docs/2.0/oauthproviders
 	 */
 	public function addOAuthProvider($params=array()) {
-		$params = $this->_filterParams($params, array('type','consumer_key','consumer_secret'));
+		$params = $this->_filterParams($params, array('type','consumer_key','consumer_secret'), array('type','consumer_key','consumer_secret'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		return $this->post(null, 'oauth_providers', $params);
 	}
 
@@ -123,9 +129,9 @@ class ContextIO {
 			$params = array('consumer_key' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('consumer_key'));
-			if (! array_key_exists('consumer_key', $params)) {
-				throw new InvalidArgumentException('consumer_key is a required hash key');
+			$params = $this->_filterParams($params, array('consumer_key'), array('consumer_key'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->delete(null, 'oauth_providers/' . $params['consumer_key']);
@@ -141,7 +147,12 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		if (is_array($params)) $params = $this->_filterParams($params, array('active_after','active_before','limit','offset','search'));
+		if (is_array($params)) {
+			$params = $this->_filterParams($params, array('active_after','active_before','limit','offset','search'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+			}
+		}
 		return $this->get($account, 'contacts', $params);
 	}
 
@@ -153,9 +164,9 @@ class ContextIO {
 			$params = array('email' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('email'));
-			if (! array_key_exists('email', $params)) {
-				throw new InvalidArgumentException('email is a required hash key');
+			$params = $this->_filterParams($params, array('email'), array('email'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->get($account, 'contacts/' . $params['email']);
@@ -169,9 +180,9 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('email','limit','offset','scope','group_by_revisions'));
-		if (! array_key_exists('email', $params)) {
-			throw new InvalidArgumentException('email is a required hash key');
+		$params = $this->_filterParams($params, array('email','limit','offset','scope','group_by_revisions'), array('email'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		return $this->get($account, 'contacts/' . $params['email'] . '/files', $params);
 	}
@@ -184,9 +195,9 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('email','limit','offset','scope'));
-		if (! array_key_exists('email', $params)) {
-			throw new InvalidArgumentException('email is a required hash key');
+		$params = $this->_filterParams($params, array('email','limit','offset','scope'), array('email'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		return $this->get($account, 'contacts/' . $params['email'] . '/messages', $params);
 	}
@@ -199,9 +210,9 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('email','limit','offset','scope'));
-		if (! array_key_exists('email', $params)) {
-			throw new InvalidArgumentException('email is a required hash key');
+		$params = $this->_filterParams($params, array('email','limit','offset','scope'), array('email'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		return $this->get($account, 'contacts/' . $params['email'] . '/threads', $params);
 	}
@@ -216,7 +227,12 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		if (is_array($params)) $params = $this->_filterParams($params, array('indexed_after','date_before','date_after','name','limit', 'offset', 'email', 'to','from','cc','bcc','group_by_revisions'));
+		if (is_array($params)) {
+			$params = $this->_filterParams($params, array('indexed_after','date_before','date_after','name','limit', 'offset', 'email', 'to','from','cc','bcc','group_by_revisions'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+			}
+		}
 		return $this->get($account, 'files', $params);
 	}
 
@@ -228,9 +244,9 @@ class ContextIO {
 			$params = array('file_id' =>$params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('file_id'));
-			if (! array_key_exists('file_id', $params)) {
-				throw new InvalidArgumentException('file_id is a required hash key');
+			$params = $this->_filterParams($params, array('file_id'), array('file_id'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->get($account, 'files/' . $params['file_id']);
@@ -255,9 +271,9 @@ class ContextIO {
 			$params = array('file_id' =>$params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('file_id'));
-			if (! array_key_exists('file_id', $params)) {
-				throw new InvalidArgumentException('file_id is a required hash key');
+			$params = $this->_filterParams($params, array('file_id'), array('file_id'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 
@@ -321,6 +337,9 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('fileid1', 'fileid2'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		$params['generate'] = 1;
 		return $this->get($account, 'diffsummary.json', $params);
 	}
@@ -341,9 +360,9 @@ class ContextIO {
 			$params = array('file_id' =>$params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('file_id'));
-			if (! array_key_exists('file_id', $params)) {
-				throw new InvalidArgumentException('file_id is a required hash key');
+			$params = $this->_filterParams($params, array('file_id'), array('file_id'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->get($account, 'files/' . $params['file_id'] . '/revisions');
@@ -366,9 +385,9 @@ class ContextIO {
 			$params = array('file_id' =>$params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('file_id'));
-			if (! array_key_exists('file_id', $params)) {
-				throw new InvalidArgumentException('file_id is a required hash key');
+			$params = $this->_filterParams($params, array('file_id'), array('file_id'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->get($account, 'files/' . $params['file_id'] . '/related');
@@ -385,7 +404,12 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		if (is_array($params)) $params = $this->_filterParams($params, array('subject', 'date_before', 'date_after', 'indexed_after', 'limit', 'offset','email', 'to','from','cc','bcc','email_message_id','type','include_body'));
+		if (is_array($params)) {
+			$params = $this->_filterParams($params, array('subject', 'date_before', 'date_after', 'indexed_after', 'limit', 'offset','email', 'to','from','cc','bcc','email_message_id','type','include_body'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+			}
+		}
 		return $this->get($account, 'messages', $params);
 	}
 
@@ -393,7 +417,10 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('label','dst_folder','src_folder','src_uid'));
+		$params = $this->_filterParams($params, array('label','dst_folder','src_folder','src_uid'), array('label','dst_folder','src_folder','src_uid'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		return $this->post($account, 'messages', $params);
 	}
 
@@ -505,9 +532,9 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'flags'));
-		if (! array_key_exists('flags', $params)) {
-			throw new InvalidArgumentException('flags is a required hash key');
+		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'flags'), array('flags'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('email_message_id', $params)) {
 			return $this->put($account, 'messages/' . $params['email_message_id'] . '/flags', array('flags' => serialize($params['flags'])));
@@ -544,6 +571,9 @@ class ContextIO {
 			return $this->get($account, 'messages/' . $params . '/body');
 		}
 		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'type'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		if (array_key_exists('email_message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['email_message_id'] . '/body', $params);
 		}
@@ -576,6 +606,9 @@ class ContextIO {
 			return $this->get($account, 'messages/' . $params . '/thread');
 		}
 		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		if (array_key_exists('email_message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread');
 		}
@@ -604,7 +637,12 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		if (is_array($params)) $params = $this->_filterParams($params, array('subject', 'indexed_after', 'active_after', 'active_before', 'started_after', 'started_before', 'limit', 'offset','email', 'to','from','cc','bcc'));
+		if (is_array($params)) {
+			$params = $this->_filterParams($params, array('subject', 'indexed_after', 'active_after', 'active_before', 'started_after', 'started_before', 'limit', 'offset','email', 'to','from','cc','bcc'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+			}
+		}
 		return $this->get($account, 'threads', $params);
 	}
 
@@ -620,6 +658,9 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('message_id', 'gmail_thread_id','gmail_message_id','email_message_id'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		if (array_key_exists('email_message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread');
 		}
@@ -649,7 +690,10 @@ class ContextIO {
 	}
 
 	public function addAccount($params) {
-		$params = $this->_filterParams($params, array('email','first_name','last_name'));
+		$params = $this->_filterParams($params, array('email','first_name','last_name'), array('email'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		return $this->post(null, 'accounts', $params);
 	}
 
@@ -658,6 +702,9 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('first_name','last_name'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		return $this->put($account, '', $params);
 	}
 
@@ -679,12 +726,20 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('email_address'));
+		$params = $this->_filterParams($params, array('email_address'), array('email_address'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		return $this->post($account, 'email_addresses', $params);
 	}
 
 	public function listAccounts($params=null) {
-		if (is_array($params)) $params = $this->_filterParams($params, array('limit','offset'));
+		if (is_array($params)) {
+			$params = $this->_filterParams($params, array('limit','offset'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+			}
+		}
 		return $this->get(null, 'accounts', $params);
 	}
 
@@ -698,9 +753,9 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('credentials', 'label', 'mailboxes', 'service_level'));
-		if (! array_key_exists('label', $params)) {
-			throw new InvalidArgumentException('label is a required hash key');
+		$params = $this->_filterParams($params, array('credentials', 'label', 'mailboxes', 'service_level'), array('label'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		return $this->put($account, 'sources/' . $params['label'], $params);
 	}
@@ -713,9 +768,9 @@ class ContextIO {
 			$params = array('label' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('label'));
-			if (! array_key_exists('label', $params)) {
-				throw new InvalidArgumentException('label is a required hash key');
+			$params = $this->_filterParams($params, array('label'), array('label'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->put($account, 'sources/' . $params['label'], array('status' => 1));
@@ -736,9 +791,9 @@ class ContextIO {
 			$params = array('label' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('label'));
-			if (! array_key_exists('label', $params)) {
-				throw new InvalidArgumentException('label is a required hash key');
+			$params = $this->_filterParams($params, array('label'), array('label'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->get($account, 'sources/' . $params['label']);
@@ -753,7 +808,10 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('type','email','server','username','oauth_consumer_key','oauth_token','oauth_token_secret','service_level','password','use_ssl','port'));
+		$params = $this->_filterParams($params, array('type','email','server','username','oauth_consumer_key','oauth_token','oauth_token_secret','service_level','password','use_ssl','port'), array('server','username'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		if (! array_key_exists('type', $params)) {
 			$params['type'] = 'imap';
 		}
@@ -773,9 +831,9 @@ class ContextIO {
 			$params = array('label' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('label'));
-			if (! array_key_exists('label', $params)) {
-				throw new InvalidArgumentException('label is a required hash key');
+			$params = $this->_filterParams($params, array('label'), array('label'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->delete($account, 'sources/' . $params['label']);
@@ -786,6 +844,9 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('label'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		if ($params == array()) {
 			return $this->post($account, 'sync');
 		}
@@ -797,6 +858,9 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		$params = $this->_filterParams($params, array('label'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		if ($params == array()) {
 			return $this->get($account, 'sync');
 		}
@@ -807,9 +871,9 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('label','folder'));
-		if (! array_key_exists('label', $params) || ! array_key_exists('folder', $params)) {
-			throw new InvalidArgumentException('label and folder are required hash keys');
+		$params = $this->_filterParams($params, array('label','folder'), array('label','folder'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		return $this->put($account, 'sources/' . $params['label'] . '/folders/' . $params['folder']);
 	}
@@ -822,9 +886,9 @@ class ContextIO {
 			$params = array('label' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('label'));
-			if (! array_key_exists('label', $params)) {
-				throw new InvalidArgumentException('label is a required hash key');
+			$params = $this->_filterParams($params, array('label'), array('label'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->get($account, 'sources/' . $params['label'] . '/folders');
@@ -845,9 +909,9 @@ class ContextIO {
 			$params = array('webhook_id' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('webhook_id'));
-			if (! array_key_exists('webhook_id', $params)) {
-				throw new InvalidArgumentException('webhook_id is a required hash key');
+			$params = $this->_filterParams($params, array('webhook_id'), array('webhook_id'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->get($account, 'webhooks/' . $params['webhook_id']);
@@ -857,7 +921,10 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('filter_to', 'filter_from', 'filter_cc', 'filter_subject', 'filter_thread', 'filter_new_important', 'filter_file', 'filter_file_revisions', 'delay', 'callback_url', 'failure_notif_url','filter_folder_added'));
+		$params = $this->_filterParams($params, array('filter_to', 'filter_from', 'filter_cc', 'filter_subject', 'filter_thread', 'filter_new_important', 'filter_file', 'filter_file_revisions', 'delay', 'callback_url', 'failure_notif_url','filter_folder_added'), array('callback_url','failure_notif_url'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
 		return $this->post($account, 'webhooks/', $params);
 	}
 
@@ -869,9 +936,9 @@ class ContextIO {
 			$params = array('webhook_id' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('webhook_id'));
-			if (! array_key_exists('webhook_id', $params)) {
-				throw new InvalidArgumentException('webhook_id is a required hash key');
+			$params = $this->_filterParams($params, array('webhook_id'), array('webhook_id'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
 		return $this->delete($account, 'webhooks/' . $params['webhook_id']);
@@ -1032,11 +1099,19 @@ class ContextIO {
 		return strlen($headers);
 	}
 	
-	protected function _filterParams($givenParams, $validParams) {
+	protected function _filterParams($givenParams, $validParams, $requiredParams=array()) {
 		$filteredParams = array();
 		foreach ($givenParams as $name => $value) {
 			if (in_array(strtolower($name), $validParams)) {
 				$filteredParams[strtolower($name)] = $value;
+			}
+			else {
+				return false;
+			}
+		}
+		foreach ($requiredParams as $name) {
+			if (! array_key_exists(strtolower($name), $filteredParams)) {
+				return false;
 			}
 		}
 		return $filteredParams;
