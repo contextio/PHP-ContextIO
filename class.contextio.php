@@ -336,12 +336,20 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('fileid1', 'fileid2'));
+		$params = $this->_filterParams($params, array('file_id1', 'file_id2', 'generate'), array('file_id1','file_id2'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
-		$params['generate'] = 1;
-		return $this->get($account, 'diffsummary.json', $params);
+		$newParams = array(
+			'file_id' => $params['file_id2']
+		);
+		if (! array_key_exists('generate', $params)) {
+			$newParams['generate'] = 1;
+		}
+		else {
+			$newParams['generate'] = $params['generate'];
+		}
+		return $this->get($account, 'files/' . $params['file_id1'] . '/changes', $newParams);
 	}
 
 	/**
