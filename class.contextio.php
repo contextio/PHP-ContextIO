@@ -707,10 +707,6 @@ class ContextIO {
 	}
 
 
-	public function apiKeyInfo() {
-		return $this->get(null, 'apikeyinfo.json');
-	}
-
 	public function addAccount($params) {
 		$params = $this->_filterParams($params, array('email','first_name','last_name'), array('email'));
 		if ($params === false) {
