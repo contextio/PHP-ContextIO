@@ -100,12 +100,12 @@ class ContextIOResponse {
 	}
 
 	private function _decodeResponse() {
+		if (! (($this->httpCode >= 200) && ($this->httpCode < 400))) {
+			$this->hasError = true;
+		}
 		if ($this->contentType != 'application/json') {
 			$this->hasError = true;
 			return;
-		}
-		if (! (($this->httpCode >= 200) && ($this->httpCode < 400))) {
-			$this->hasError = true;
 		}
 		$this->decodedResponse = json_decode($this->rawResponse, true);
 	}
