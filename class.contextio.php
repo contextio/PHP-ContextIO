@@ -765,6 +765,20 @@ class ContextIO {
 		return $this->delete($account, 'email_addresses/' . $params['email_address']);
 	}
 
+	public function setPrimaryEmailAddressForAccount($account, $params) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		if (is_string($params)) {
+			return $this->put($account, 'email_addresses/' . $params, array('primary' => 1));
+		}
+		$params = $this->_filterParams($params, array('email_address'), array('email_address'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
+		return $this->put($account, 'email_addresses/' . $params['email_address'], array('primary' => 1));
+	}
+
 	public function listAccounts($params=null) {
 		if (is_array($params)) {
 			$params = $this->_filterParams($params, array('limit','offset'));
