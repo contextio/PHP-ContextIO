@@ -97,15 +97,15 @@ class ContextIO {
 	 */
 	public function getOAuthProvider($params) {
 		if (is_string($params)) {
-			$params = array('consumer_key' => $params);
+			$params = array('provider_consumer_key' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('consumer_key'), array('consumer_key'));
+			$params = $this->_filterParams($params, array('provider_consumer_key'), array('provider_consumer_key'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
-		return $this->get(null, 'oauth_providers/' . $params['consumer_key']);
+		return $this->get(null, 'oauth_providers/' . $params['provider_consumer_key']);
 	}
 
 	/**
@@ -113,7 +113,7 @@ class ContextIO {
 	 * @link http://context.io/docs/2.0/oauthproviders
 	 */
 	public function addOAuthProvider($params=array()) {
-		$params = $this->_filterParams($params, array('type','consumer_key','consumer_secret'), array('type','consumer_key','consumer_secret'));
+		$params = $this->_filterParams($params, array('type','provider_consumer_key','provider_consumer_secret'), array('type','provider_consumer_key','provider_consumer_secret'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
@@ -126,15 +126,15 @@ class ContextIO {
 	 */
 	public function deleteOAuthProvider($params) {
 		if (is_string($params)) {
-			$params = array('consumer_key' => $params);
+			$params = array('provider_consumer_key' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('consumer_key'), array('consumer_key'));
+			$params = $this->_filterParams($params, array('provider_consumer_key'), array('provider_consumer_key'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
-		return $this->delete(null, 'oauth_providers/' . $params['consumer_key']);
+		return $this->delete(null, 'oauth_providers/' . $params['provider_consumer_key']);
 	}
 
 	/**
