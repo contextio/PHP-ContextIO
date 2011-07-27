@@ -134,8 +134,36 @@ class ContextIOResponse {
 		return $this->httpCode;
 	}
 
+	/**
+	 * Returns the response body parsed into a PHP structure. To get the JSON
+	 * string, use getRawResponse()
+	 */
 	public function getData() {
 		return $this->decodedResponse;
+	}
+
+	/**
+	 * Let's you access the value of one specific property in the response body.
+	 * This support nested properties. For example:
+	 * <code>
+	 *  $response = $ContextIO->getMessage($accountId, array("message_id"=>"1234abcd"));
+	 * 	$data = $response->getData();
+	 *  $firstRecipientEmail = $data['addresses']['to'][0]['email'];
+	 * </code>
+	 *  ... is equivalent to ...
+	 * <code>
+	 *  $response = $ContextIO->getMessage($accountId, array("message_id"=>"1234abcd"));
+	 * 	$firstRecipientEmail = $response->getDataProperty("addresses.to.0.email");
+	 * </code>
+	 */
+	public function getDataProperty($propertyName) {
+		$props = explode(".", $propertyName);
+		$value = $this->decodedResponse;
+		do {
+			$prop = array_shift($props);
+			$value = (strval(intval($prop)) === $prop) ? $value[intval($prop)] : (array_key_exists($prop, $value)) ? $value[$prop] : null;
+		} while(count($props) >= 1 && !is_null($value));
+		return $value;
 	}
 
 	public function hasError() {
