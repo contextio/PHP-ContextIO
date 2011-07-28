@@ -195,7 +195,7 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('email','limit','offset','scope'), array('email'));
+		$params = $this->_filterParams($params, array('email','limit','offset','scope','folder'), array('email'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
@@ -413,7 +413,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) {
-			$params = $this->_filterParams($params, array('subject', 'date_before', 'date_after', 'indexed_after', 'limit', 'offset','email', 'to','from','cc','bcc','email_message_id','type','include_body'));
+			$params = $this->_filterParams($params, array('subject', 'date_before', 'date_after', 'indexed_after', 'limit', 'offset','email', 'to','from','cc','bcc','email_message_id','type','include_body','folder'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
