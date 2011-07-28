@@ -1124,7 +1124,7 @@ class ContextIO {
 		$result = curl_exec($curl);
 		
 		$httpHeadersIn = ($this->saveHeaders) ? $this->responseHeaders : null;
-		$httpHeadersOut = ($this->saveHeaders) ? preg_split('/\\n|\\r/', curl_getinfo($curl, CURLINFO_HEADER_OUT)) : null;
+		$httpHeadersOut = ($this->saveHeaders) ? preg_split('/(\\n|\\r){1,2}/', curl_getinfo($curl, CURLINFO_HEADER_OUT)) : null;
 		
 		$response = new ContextIOResponse(
 			curl_getinfo($curl, CURLINFO_HTTP_CODE),
