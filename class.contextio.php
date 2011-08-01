@@ -733,6 +733,13 @@ class ContextIO {
 		return $this->get($account);
 	}
 
+	public function deleteAccount($account) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		return $this->delete($account);
+	}
+
 	public function listAccountEmailAddresses($account) {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
