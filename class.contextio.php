@@ -788,7 +788,7 @@ class ContextIO {
 
 	public function listAccounts($params=null) {
 		if (is_array($params)) {
-			$params = $this->_filterParams($params, array('limit','offset'));
+			$params = $this->_filterParams($params, array('limit','offset','email'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
