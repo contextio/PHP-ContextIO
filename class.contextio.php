@@ -87,15 +87,15 @@ class ContextIO {
 	 *
 	 * @link http://context.io/docs/2.0/connecttokens
 	 */
-	public function listConnectTokens() {
-		return $this->get(null, 'connect_tokens');
+	public function listConnectTokens($account=null) {
+		return $this->get($account, 'connect_tokens');
 	}
 
 	/**
 	 *
 	 * @link http://context.io/docs/2.0/connecttokens
 	 */
-	public function getConnectToken($params) {
+	public function getConnectToken($account=null,$params) {
 		if (is_string($params)) {
 			$params = array('token' => $params);
 		}
@@ -105,26 +105,26 @@ class ContextIO {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
-		return $this->get(null, 'connect_tokens/' . $params['token']);
+		return $this->get($account, 'connect_tokens/' . $params['token']);
 	}
 
 	/**
 	 *
 	 * @link http://context.io/docs/2.0/connecttokens
 	 */
-	public function addConnectToken($params=array()) {
-		$params = $this->_filterParams($params, array('service_level','email','callback_url','first_name','last_name'), array('service_level','callback_url'));
+	public function addConnectToken($account=null,$params=array()) {
+		$params = $this->_filterParams($params, array('service_level','email','callback_url','first_name','last_name','provider_consumer_key'), array('callback_url'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
-		return $this->post(null, 'connect_tokens', $params);
+		return $this->post($account, 'connect_tokens', $params);
 	}
 
 	/**
 	 *
 	 * @link http://context.io/docs/2.0/connecttokens
 	 */
-	public function deleteConnectToken($params) {
+	public function deleteConnectToken($account=null, $params) {
 		if (is_string($params)) {
 			$params = array('token' => $params);
 		}
@@ -134,7 +134,7 @@ class ContextIO {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
-		return $this->delete(null, 'connect_tokens/' . $params['token']);
+		return $this->delete($account, 'connect_tokens/' . $params['token']);
 	}
 
 	/**
