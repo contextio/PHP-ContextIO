@@ -1131,6 +1131,17 @@ class ContextIO {
 		return $this->delete($account, 'webhooks/' . $params['webhook_id']);
 	}
 
+	public function modifyWebhook($account, $params) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		$params = $this->_filterParams($params, array('webhook_id', 'active'), array('webhook_id','active'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
+		return $this->put($account, 'webhooks/' . $params['webhook_id'], $params);
+	}
+
 	/**
 	 * Specify whether or not API calls should be made over a secure connection. 
 	 * HTTPS is used on all calls by default.
