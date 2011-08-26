@@ -1235,6 +1235,9 @@ class ContextIO {
 		$consumer = new ContextIOExtLib\OAuthConsumer($this->oauthKey, $this->oauthSecret);
 		if (! is_null($account)) {
 			$action = 'accounts/' . $account . '/' . $action;
+			if (substr($action,-1) == '/') {
+				$action = substr($action,0,-1);
+			}
 		}
 		$baseUrl = $this->build_url($action);
 		$req = ContextIOExtLib\OAuthRequest::from_consumer_and_token($consumer, null, $httpMethod, $baseUrl, $parameters);
