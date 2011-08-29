@@ -922,7 +922,7 @@ class ContextIO {
 
 	public function listAccounts($params=null) {
 		if (is_array($params)) {
-			$params = $this->_filterParams($params, array('limit','offset','email','imap_status_ok','imap_status'));
+			$params = $this->_filterParams($params, array('limit','offset','email','status_ok','status'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
@@ -968,7 +968,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) {
-			$params = $this->_filterParams($params, array('imap_status_ok','imap_status'));
+			$params = $this->_filterParams($params, array('status_ok','status'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
