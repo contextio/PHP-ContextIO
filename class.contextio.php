@@ -813,27 +813,27 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('message_id', 'gmail_thread_id','gmail_message_id','email_message_id'));
+		$params = $this->_filterParams($params, array('message_id', 'gmail_thread_id','gmail_message_id','email_message_id','include_body','include_headers','include_flags','type'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread');
+			return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread', $params);
 		}
 		elseif (array_key_exists('message_id', $params)) {
-			return $this->get($account, 'messages/' . $params['message_id'] . '/thread');
+			return $this->get($account, 'messages/' . $params['message_id'] . '/thread', $params);
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
-				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/thread');
+				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/thread', $params);
 			}
-			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/thread');
+			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/thread', $params);
 		}
 		elseif (array_key_exists('gmail_thread_id', $params)) {
 			if (substr($params['gmail_thread_id'],0,3) == 'gm-') {
-				return $this->get($account, 'threads/' . $params['gmail_thread_id']);
+				return $this->get($account, 'threads/' . $params['gmail_thread_id'], $params);
 			}
-			return $this->get($account, 'threads/gm-' . $params['gmail_thread_id']);
+			return $this->get($account, 'threads/gm-' . $params['gmail_thread_id'], $params);
 		}
 		else {
 			throw new InvalidArgumentException('gmail_thread_id, messageId, email_message_id or gmail_message_id are required hash keys');
