@@ -80,7 +80,7 @@ class ContextIO {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
-		return $this->get(null, 'discovery?source=imap&email=' . $params['email']);
+		return $this->get(null, 'discovery?source_type=imap&email=' . $params['email']);
 	}
 
 	/**
