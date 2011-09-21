@@ -57,7 +57,7 @@ class ContextIO {
 		$this->oauthSecret = $secret;
 		$this->saveHeaders = false;
 		$this->ssl = true;
-		$this->endPoint = 'api-preview.context.io';
+		$this->endPoint = 'api.context.io';
 		$this->apiVersion = '2.0';
 		$this->lastResponse = null;
 		$this->authHeaders = true;
