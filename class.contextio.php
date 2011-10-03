@@ -513,13 +513,13 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . $params);
+			return $this->get($account, 'messages/' . urlencode($params));
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id']);
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . $params['email_message_id']);
+			return $this->get($account, 'messages/' . urlencode($params['email_message_id']));
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -545,13 +545,13 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . $params . '/headers');
+			return $this->get($account, 'messages/' . urlencode($params) . '/headers');
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id']. '/headers');
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . $params['email_message_id']. '/headers');
+			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/headers');
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -577,13 +577,13 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			$url = 'messages/' . $params . '/source';
+			$url = 'messages/' . urlencode($params) . '/source';
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			$url = 'messages/' . $params['message_id']. '/source';
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
-			$url = 'messages/' . $params['email_message_id']. '/source';
+			$url = 'messages/' . urlencode($params['email_message_id']) . '/source';
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -657,13 +657,13 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . $params . '/flags');
+			return $this->get($account, 'messages/' . urlencode($params) . '/flags');
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id']. '/flags');
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . $params['email_message_id']. '/flags');
+			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/flags');
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -693,7 +693,7 @@ class ContextIO {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->put($account, 'messages/' . $params['email_message_id'] . '/flags', array('flags' => serialize($params['flags'])));
+			return $this->put($account, 'messages/' . urlencode($params['email_message_id']) . '/flags', array('flags' => serialize($params['flags'])));
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->put($account, 'messages/' . $params['message_id'] . '/flags', array('flags' => serialize($params['flags'])));
@@ -724,14 +724,14 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . $params . '/body');
+			return $this->get($account, 'messages/' . urlencode($params) . '/body');
 		}
 		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'type'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . $params['email_message_id'] . '/body', $params);
+			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/body', $params);
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id'] . '/body', $params);
@@ -759,14 +759,14 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . $params . '/thread');
+			return $this->get($account, 'messages/' . urlencode($params) . '/thread');
 		}
 		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread');
+			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/thread');
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id'] . '/thread');
@@ -818,7 +818,7 @@ class ContextIO {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . $params['email_message_id'] . '/thread', $params);
+			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/thread', $params);
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id'] . '/thread', $params);
