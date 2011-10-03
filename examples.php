@@ -52,8 +52,8 @@ foreach ($r->getData() as $document) {
 $saveToDir = dirname(__FILE__)."/".mt_rand(100,999);
 mkdir($saveToDir);
 
-echo "\nDownloading all attachments matching 'proposal'\n";
-$args = array('name'=>'creenshot');
+echo "\nDownloading all attachments matching 'creenshot'\n";
+$args = array('file_name'=>'creenshot');
 $r = $contextIO->listFiles($accountId, $args);
 foreach ($r->getData() as $attachment) {
 	echo "Downloading attachment '".$attachment['file_name']."' to $saveToDir ... ";
