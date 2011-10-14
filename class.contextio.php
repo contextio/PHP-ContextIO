@@ -479,14 +479,11 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('label','dst_folder','src_folder','src_uid','src_file'), array('label','dst_folder'));
+		$params = $this->_filterParams($params, array('dst_label','dst_folder'), array('dst_label','dst_folder'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
-		if (array_key_exists('src_folder', $params) && array_key_exists('src_uid', $params)) {
-			return $this->post($account, 'messages', $params);
-		}
-		elseif (array_key_exists('src_file', $params)) {
+		if (array_key_exists('src_file', $params)) {
 			$params['src_file'] == realpath($params['src_file']);
 			if (($params['src_file'] === false) || !is_readable($params['src_file'])) {
 				throw new InvalidArgumentException("invalid source file");
@@ -495,8 +492,20 @@ class ContextIO {
 			unset($params['src_file']);
 			return $this->post($account, 'messages', $params);
 		}
+		elseif (array_key_exists('message_id', $params)) {
+			return $this->post($account, 'messages/' . $params['message_id'], $params);
+		}
+		elseif (array_key_exists('email_message_id', $params)) {
+			return $this->post($account, 'messages/' . urlencode($params['email_message_id']), $params);
+		}
+		elseif (array_key_exists('gmail_message_id', $params)) {
+			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+				return $this->post($account, 'messages/' . $params['gmail_message_id'], $params);
+			}
+			return $this->post($account, 'messages/gm-' . $params['gmail_message_id'], $params);
+		}
 		else {
-			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+			throw new InvalidArgumentException('src_file, message_id, email_message_id or gmail_message_id is a required hash key');
 		}
 	}
 
