@@ -310,7 +310,7 @@ class ContextIO {
 	 * Returns the content a given attachment. If you want to save the attachment to
 	 * a file, set $saveAs to the destination file name. If $saveAs is left to null,
 	 * the function will return the file data.
-	 * on the 
+	 * on the
 	 * @link http://context.io/docs/2.0/accounts/files/content
 	 * @param string $account accountId or email address of the mailbox you want to query
 	 * @param array[string]string $params Query parameters for the API call: 'fileId'
@@ -345,11 +345,11 @@ class ContextIO {
 		else {
 			$curl = curl_init($req->to_url());
 		}
-		
+
 		if ($this->ssl) {
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		}
-		
+
 		curl_setopt($curl, CURLOPT_USERAGENT, 'ContextIOLibrary/2.0 (PHP)');
 
 		if (! is_null($saveAs)) {
@@ -407,7 +407,7 @@ class ContextIO {
 	}
 
 	/**
-	 * Returns a list of revisions attached to other emails in the 
+	 * Returns a list of revisions attached to other emails in the
 	 * mailbox for one or more given files (see fileid parameter below).
 	 * @link http://context.io/docs/2.0/accounts/files/revisions
 	 * @param string $account accountId or email address of the mailbox you want to query
@@ -431,7 +431,7 @@ class ContextIO {
 	}
 
 	/**
-	 * Returns a list of files that are related to the given file. 
+	 * Returns a list of files that are related to the given file.
 	 * Currently, relation between files is based on how similar their names are.
 	 * You must specify either the fileId of fileName parameter
 	 * @link http://context.io/docs/2.0/accounts/files/related
@@ -620,11 +620,11 @@ class ContextIO {
 		else {
 			$curl = curl_init($req->to_url());
 		}
-		
+
 		if ($this->ssl) {
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		}
-		
+
 		curl_setopt($curl, CURLOPT_USERAGENT, 'ContextIOLibrary/2.0 (PHP)');
 
 		if (! is_null($saveAs)) {
@@ -1158,7 +1158,7 @@ class ContextIO {
 	}
 
 	/**
-	 * Specify whether or not API calls should be made over a secure connection. 
+	 * Specify whether or not API calls should be made over a secure connection.
 	 * HTTPS is used on all calls by default.
 	 * @param bool $sslOn Set to false to make calls over HTTP, true to use HTTPS
 	 */
@@ -1213,7 +1213,7 @@ class ContextIO {
 	public function saveHeaders($yes=true) {
 		$this->saveHeaders = $yes;
 	}
-	
+
 	protected function get($account, $action='', $parameters=null) {
 		if (is_array($account)) {
 			$tmp_results = array();
@@ -1269,11 +1269,11 @@ class ContextIO {
 		else {
 			$curl = curl_init($req->to_url());
 		}
-		
+
 		if ($this->ssl) {
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		}
-		
+
 		curl_setopt($curl, CURLOPT_USERAGENT, 'ContextIOLibrary/2.0 (PHP)');
 
 		if ($httpMethod != 'GET') {
@@ -1296,10 +1296,10 @@ class ContextIO {
 			curl_setopt($curl, CURLINFO_HEADER_OUT, 1);
 		}
 		$result = curl_exec($curl);
-		
+
 		$httpHeadersIn = ($this->saveHeaders) ? $this->responseHeaders : null;
 		$httpHeadersOut = ($this->saveHeaders) ? preg_split('/(\\n|\\r){1,2}/', curl_getinfo($curl, CURLINFO_HEADER_OUT)) : null;
-		
+
 		$response = new ContextIOResponse(
 			curl_getinfo($curl, CURLINFO_HTTP_CODE),
 			$httpHeadersOut,
@@ -1318,7 +1318,7 @@ class ContextIO {
 		$this->responseHeaders[] = trim($headers,"\n\r");
 		return strlen($headers);
 	}
-	
+
 	protected function _filterParams($givenParams, $validParams, $requiredParams=array()) {
 		$filteredParams = array();
 		foreach ($givenParams as $name => $value) {
