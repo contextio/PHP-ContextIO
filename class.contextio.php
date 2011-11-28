@@ -1073,9 +1073,12 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('label','folder'), array('label','folder'));
+		$params = $this->_filterParams($params, array('label','folder','delim'), array('label','folder'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
+		if (array_key_exists('delim', $params)) {
+			return $this->put($account, 'sources/' . $params['label'] . '/folders/' . $params['folder'], array('delim' => $params['delim']));
 		}
 		return $this->put($account, 'sources/' . $params['label'] . '/folders/' . $params['folder']);
 	}
