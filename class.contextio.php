@@ -770,21 +770,21 @@ class ContextIO {
 		if (is_string($params)) {
 			return $this->get($account, 'messages/' . urlencode($params) . '/thread');
 		}
-		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id'));
+		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'include_body', 'include_headers', 'include_flags', 'type'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/thread');
+			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/thread', $params);
 		}
 		elseif (array_key_exists('message_id', $params)) {
-			return $this->get($account, 'messages/' . $params['message_id'] . '/thread');
+			return $this->get($account, 'messages/' . $params['message_id'] . '/thread', $params);
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
-				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/thread');
+				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/thread', $params);
 			}
-			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/thread');
+			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/thread', $params);
 		}
 		else {
 			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
