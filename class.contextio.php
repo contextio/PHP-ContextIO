@@ -873,7 +873,7 @@ class ContextIO {
 
 
 	public function addAccount($params) {
-		$params = $this->_filterParams($params, array('email','first_name','last_name'), array('email'));
+		$params = $this->_filterParams($params, array('email','first_name','last_name','type','server','username','provider_consumer_key','provider_token','provider_token_secret','service_level','sync_period','password','use_ssl','port','callback_url'), array('email'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
