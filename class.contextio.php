@@ -695,6 +695,38 @@ class ContextIO {
 	}
 
 	/**
+	 * Returns the folders the message is part of.
+	 * A message can be identified by the value of its Message-ID header
+	 * @link http://context.io/docs/2.0/accounts/messages/folders
+	 * @param string $account accountId
+	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId'
+	 * @return ContextIOResponse
+	 */
+	public function getMessageFolders($account, $params) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		if (is_string($params)) {
+			return $this->get($account, 'messages/' . urlencode($params) . '/folders');
+		}
+		elseif (array_key_exists('message_id', $params)) {
+			return $this->get($account, 'messages/' . $params['message_id']. '/folders');
+		}
+		elseif (array_key_exists('email_message_id', $params)) {
+			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/folders');
+		}
+		elseif (array_key_exists('gmail_message_id', $params)) {
+			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/folders');
+			}
+			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/folders');
+		}
+		else {
+			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
+		}
+	}
+
+	/**
 	 * Returns the message flags of a message.
 	 * A message can be identified by the value of its Message-ID header
 	 * @link http://context.io/docs/2.0/accounts/messages/flags
