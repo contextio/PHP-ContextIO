@@ -484,7 +484,7 @@ class ContextIO {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('src_file', $params)) {
-			$params['src_file'] == realpath($params['src_file']);
+			$params['src_file'] = realpath($params['src_file']);
 			if (($params['src_file'] === false) || !is_readable($params['src_file'])) {
 				throw new InvalidArgumentException("invalid source file");
 			}
