@@ -763,6 +763,71 @@ class ContextIO {
 	}
 
 	/**
+	 * Sets the message folders of a message.
+	 * A message can be identified by the value of its Message-ID header
+	 * @param string $account accountId of the mailbox you want to query
+	 * @param array[string]mixed $params Query parameters for the API call: 'emailMessageId'
+	 * @return ContextIOResponse
+	 */
+	public function setMessageFolders($account, $params) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'add','remove','folders'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
+		if (array_key_exists('folders', $params)) {
+			if (! is_array($params['folders'])) {
+				throw new InvalidArgumentException("folders must be array");
+			}
+			$folderStr = json_encode($params['folders']);
+			if (array_key_exists('email_message_id', $params)) {
+				return $this->put($account, 'messages/' . urlencode($params['email_message_id']) . '/folders', $folderStr);
+			}
+			elseif (array_key_exists('message_id', $params)) {
+				return $this->put($account, 'messages/' . $params['message_id'] . '/folders', $folderStr);
+			}
+			elseif (array_key_exists('gmail_message_id', $params)) {
+				if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+					return $this->put($account, 'messages/' . $params['gmail_message_id'] . '/folders', $folderStr);
+				}
+				return $this->put($account, 'messages/gm-' . $params['gmail_message_id'] . '/folders', $folderStr);
+			}
+			else {
+				throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
+			}
+		}
+		else {
+			$addRemoveParams = array();
+			foreach (array('add','remove') as $currentName) {
+				if (array_key_exists($currentName, $params)) {
+					$addRemoveParams[$currentName] = $params[$currentName];
+				}
+			}
+			if (count(array_keys($addRemoveParams)) == 0) {
+				throw new InvalidArgumentException("must specify at least one of add,remove");
+			}
+
+			if (array_key_exists('email_message_id', $params)) {
+				return $this->post($account, 'messages/' . urlencode($params['email_message_id']) . '/folders', $addRemoveParams);
+			}
+			elseif (array_key_exists('message_id', $params)) {
+				return $this->post($account, 'messages/' . $params['message_id'] . '/folders', $addRemoveParams);
+			}
+			elseif (array_key_exists('gmail_message_id', $params)) {
+				if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+					return $this->post($account, 'messages/' . $params['gmail_message_id'] . '/folders', $addRemoveParams);
+				}
+				return $this->post($account, 'messages/gm-' . $params['gmail_message_id'] . '/folders', $addRemoveParams);
+			}
+			else {
+				throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
+			}
+		}
+	}
+
+	/**
 	 * Returns the message flags of a message.
 	 * A message can be identified by the value of its Message-ID header
 	 * @link http://context.io/docs/2.0/accounts/messages/flags
