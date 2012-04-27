@@ -38,7 +38,7 @@ class ContextIOResponse {
 	protected $contentType;
 	protected $hasError;
 
-	function __construct($httpCode, $requestHeaders, $responseHeaders, $contentType, $rawResponse) {
+	function __construct($httpCode, $requestHeaders, $responseHeaders, $contentType, $rawResponse, $acceptableContentTypes=array('application/json')) {
 		$this->httpCode = (int)$httpCode;
 		$this->contentType = $contentType;
 		$this->rawResponse = $rawResponse;
@@ -46,7 +46,7 @@ class ContextIOResponse {
 		$this->rawRequestHeaders = (is_array($requestHeaders)) ? $requestHeaders : false;
 		$this->hasError = false;
 		$this->headers = array('request'=>$requestHeaders, 'response'=>null); 
-		$this->_decodeResponse();
+		$this->_decodeResponse($acceptableContentTypes);
 		$this->_parseHeaders('response');
 		$this->_parseHeaders('request');
 	}
@@ -99,15 +99,17 @@ class ContextIOResponse {
 		}
 	}
 
-	private function _decodeResponse() {
+	private function _decodeResponse($acceptableContentTypes) {
 		if (! (($this->httpCode >= 200) && ($this->httpCode < 400))) {
 			$this->hasError = true;
 		}
-		if ($this->contentType != 'application/json') {
+		if (! in_array($this->contentType, $acceptableContentTypes)) {
 			$this->hasError = true;
 			return;
 		}
-		$this->decodedResponse = json_decode($this->rawResponse, true);
+		if ($this->contentType == 'application/json') {
+			$this->decodedResponse = json_decode($this->rawResponse, true);
+		}
 	}
 
 	public function getRawResponse() {
