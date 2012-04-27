@@ -306,6 +306,19 @@ class ContextIO {
 		return $this->get($account, 'files/' . $params['file_id']);
 	}
 
+	public function getFileURL($account, $params) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		if (is_string($params)) {
+			$params = array('file_id' =>$params);
+		}
+		else {
+			$params = $this->_filterParams($params, array('file_id'), array('file_id'));
+		}
+		return $this->get($account, 'files/' . $params['file_id'] . '/content', array('as_link' => 1), array('text/uri-list'));
+	}
+
 	/**
 	 * Returns the content a given attachment. If you want to save the attachment to
 	 * a file, set $saveAs to the destination file name. If $saveAs is left to null,
@@ -1305,11 +1318,11 @@ class ContextIO {
 		$this->saveHeaders = $yes;
 	}
 
-	protected function get($account, $action='', $parameters=null) {
+	protected function get($account, $action='', $parameters=null, $acceptableContentTypes=null) {
 		if (is_array($account)) {
 			$tmp_results = array();
 			foreach ($account as $accnt) {
-				$result = $this->_doCall('GET', $accnt, $action, $parameters);
+				$result = $this->_doCall('GET', $accnt, $action, $parameters, null, $acceptableContentTypes);
 				if ($result === false) {
 					return false;
 				}
@@ -1318,7 +1331,7 @@ class ContextIO {
 			return $tmp_results;
 		}
 		else {
-			return $this->_doCall('GET', $account, $action, $parameters);
+			return $this->_doCall('GET', $account, $action, $parameters, null, $acceptableContentTypes);
 		}
 	}
 
@@ -1334,7 +1347,7 @@ class ContextIO {
 		return $this->_doCall('DELETE', $account, $action, $parameters);
 	}
 
-	protected function _doCall($httpMethod, $account, $action, $parameters=null, $file=null) {
+	protected function _doCall($httpMethod, $account, $action, $parameters=null, $file=null, $acceptableContentTypes=null) {
 		$consumer = new ContextIOExtLib\OAuthConsumer($this->oauthKey, $this->oauthSecret);
 		if (! is_null($account)) {
 			$action = 'accounts/' . $account . '/' . $action;
@@ -1347,19 +1360,20 @@ class ContextIO {
 		if ($isMultiPartPost || is_string($parameters)) {
 			$this->authHeaders = true;
 		}
-		$req = ContextIOExtLib\OAuthRequest::from_consumer_and_token($consumer, null, $httpMethod, $baseUrl, ($isMultiPartPost) ? array() : $parameters);
+		$req = ContextIOExtLib\OAuthRequest::from_consumer_and_token($consumer, null, $httpMethod, $baseUrl, ($isMultiPartPost || is_string($parameters)) ? array() : $parameters);
 		$sig_method = new ContextIOExtLib\OAuthSignatureMethod_HMAC_SHA1();
 		$req->sign_request($sig_method, $consumer, null);
 
+		$httpHeadersToSet = array();
 		//get data using signed url
 		if ($this->authHeaders) {
 			if ($httpMethod != 'POST') {
-				$curl = curl_init((is_null($parameters) || count($parameters) == 0) ? $baseUrl : $baseUrl. '?' . ContextIOExtLib\OAuthUtil::build_http_query($parameters));
+				$curl = curl_init((is_null($parameters) || is_string($parameters) || (count($parameters) == 0)) ? $baseUrl : $baseUrl. '?' . ContextIOExtLib\OAuthUtil::build_http_query($parameters));
 			}
 			else {
 				$curl = curl_init($baseUrl);
 			}
-			curl_setopt($curl, CURLOPT_HTTPHEADER, array($req->to_header()));
+			$httpHeadersToSet[] = $req->to_header();
 		}
 		else {
 			$curl = curl_init($req->to_url());
@@ -1389,7 +1403,15 @@ class ContextIO {
 			}
 			else {
 				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $httpMethod);
+				if (($httpMethod == 'PUT') && is_string($parameters)) {
+					$httpHeadersToSet[] = 'Content-Length: ' . strlen($parameters);
+					$httpHeadersToSet[] = 'Content-Type: application/json';
+					curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters); 
+				}
 			}
+		}
+		if (count($httpHeadersToSet) > 0) {
+			curl_setopt($curl, CURLOPT_HTTPHEADER, $httpHeadersToSet);
 		}
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
@@ -1404,12 +1426,23 @@ class ContextIO {
 		$httpHeadersIn = ($this->saveHeaders) ? $this->responseHeaders : null;
 		$httpHeadersOut = ($this->saveHeaders) ? preg_split('/(\\n|\\r){1,2}/', curl_getinfo($curl, CURLINFO_HEADER_OUT)) : null;
 
-		$response = new ContextIOResponse(
-			curl_getinfo($curl, CURLINFO_HTTP_CODE),
-			$httpHeadersOut,
-			$httpHeadersIn,
-			curl_getinfo($curl, CURLINFO_CONTENT_TYPE),
-			$result);
+		if (is_null($acceptableContentTypes)) {
+			$response = new ContextIOResponse(
+				curl_getinfo($curl, CURLINFO_HTTP_CODE),
+				$httpHeadersOut,
+				$httpHeadersIn,
+				curl_getinfo($curl, CURLINFO_CONTENT_TYPE),
+				$result);
+		}
+		else {
+			$response = new ContextIOResponse(
+				curl_getinfo($curl, CURLINFO_HTTP_CODE),
+				$httpHeadersOut,
+				$httpHeadersIn,
+				curl_getinfo($curl, CURLINFO_CONTENT_TYPE),
+				$result,
+				$acceptableContentTypes);
+		}
 		curl_close($curl);
 		if ($response->hasError()) {
 			$this->lastResponse = $response;
