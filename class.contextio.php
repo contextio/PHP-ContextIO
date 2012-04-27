@@ -457,6 +457,29 @@ class ContextIO {
 
 	/**
 	 * Returns message information
+	 * @param string $account accountId of the mailbox you want to query
+	 * @param array[string]mixed $params Query parameters for the API call: 'subject', 'limit'
+	 * @return ContextIOResponse
+	 */
+	public function listMessagesBySourceAndFolder($account, $params=null) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		if (is_array($params)) {
+			$params = $this->_filterParams($params, array('label','folder','limit','offset','type','include_body','include_headers','include_flags'), array('label','folder'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+			}
+		}
+		$source = $params['label'];
+		$folder = $params['folder'];
+		unset($params['label']);
+		unset($params['folder']);
+		return $this->get($account, "sources/$source/folders/$folder/messages", $params);
+	}
+
+	/**
+	 * Returns message information
 	 * @link http://context.io/docs/2.0/accounts/messages
 	 * @param string $account accountId of the mailbox you want to query
 	 * @param array[string]mixed $params Query parameters for the API call: 'subject', 'limit'
