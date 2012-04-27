@@ -1242,10 +1242,14 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('label','rcpt','message'), array('label','rcpt','message'));
+		$params = $this->_filterParams($params, array('label','rcpt','message','message_id', 'gmail_thread_id'), array('label'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
+		if (! array_key_exists('message_id', $params) && ! array_key_exists('message', $params) && ! array_key_exists('gmail_thread_id', $params)) {
+			throw new InvalidArgumentException('gmail_thread_id, message_id or message is a required hash key');
+		}
+
 		return $this->post($account, 'exits/' . $params['label'], $params);
 	}
 
