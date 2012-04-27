@@ -502,7 +502,7 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('dst_label','dst_folder'), array('dst_label','dst_folder'));
+		$params = $this->_filterParams($params, array('dst_label','dst_folder','src_file','message_id','email_message_id','gmail_message_id'), array('dst_label','dst_folder'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
@@ -511,9 +511,9 @@ class ContextIO {
 			if (($params['src_file'] === false) || !is_readable($params['src_file'])) {
 				throw new InvalidArgumentException("invalid source file");
 			}
-			$params['message'] = '@' . $params['src_file'];
+			$src_file = '@' . $params['src_file'];
 			unset($params['src_file']);
-			return $this->post($account, 'messages', $params);
+			return $this->post($account, 'messages', $params, array('field' => 'message', 'filename' => $src_file));
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->post($account, 'messages/' . $params['message_id'], $params);
@@ -1326,15 +1326,15 @@ class ContextIO {
 		return $this->_doCall('PUT', $account, $action, $parameters);
 	}
 
-	protected function post($account, $action='', $parameters=null) {
-		return $this->_doCall('POST', $account, $action, $parameters);
+	protected function post($account, $action='', $parameters=null, $file=null) {
+		return $this->_doCall('POST', $account, $action, $parameters, $file);
 	}
 
 	protected function delete($account, $action='', $parameters=null) {
 		return $this->_doCall('DELETE', $account, $action, $parameters);
 	}
 
-	protected function _doCall($httpMethod, $account, $action, $parameters=null) {
+	protected function _doCall($httpMethod, $account, $action, $parameters=null, $file=null) {
 		$consumer = new ContextIOExtLib\OAuthConsumer($this->oauthKey, $this->oauthSecret);
 		if (! is_null($account)) {
 			$action = 'accounts/' . $account . '/' . $action;
@@ -1343,7 +1343,11 @@ class ContextIO {
 			}
 		}
 		$baseUrl = $this->build_url($action);
-		$req = ContextIOExtLib\OAuthRequest::from_consumer_and_token($consumer, null, $httpMethod, $baseUrl, $parameters);
+		$isMultiPartPost = (! is_null($file) && array_key_exists('field', $file) && array_key_exists('filename', $file));
+		if ($isMultiPartPost || is_string($parameters)) {
+			$this->authHeaders = true;
+		}
+		$req = ContextIOExtLib\OAuthRequest::from_consumer_and_token($consumer, null, $httpMethod, $baseUrl, ($isMultiPartPost) ? array() : $parameters);
 		$sig_method = new ContextIOExtLib\OAuthSignatureMethod_HMAC_SHA1();
 		$req->sign_request($sig_method, $consumer, null);
 
@@ -1371,7 +1375,16 @@ class ContextIO {
 			if ($httpMethod == 'POST') {
 				curl_setopt($curl, CURLOPT_POST, true);
 				if (! is_null($parameters)) {
-					curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($parameters));
+					if (is_null($file)) {
+						curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($parameters));
+					}
+					else {
+						$parameters[$file['field']] = $file['filename'];
+						curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters);
+					}
+				}
+				elseif (! is_null($file)) {
+					curl_setopt($curl, CURLOPT_POSTFIELDS, array($file['field'] => $file['filename']));
 				}
 			}
 			else {
