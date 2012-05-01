@@ -977,7 +977,7 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('message_id', 'gmail_thread_id','gmail_message_id','email_message_id','include_body','include_headers','include_flags','type','include_person_info'));
+		$params = $this->_filterParams($params, array('message_id', 'gmail_thread_id','gmail_message_id','email_message_id','include_body','include_headers','include_flags','type','include_person_info','limit','offset'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
