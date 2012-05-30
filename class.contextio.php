@@ -1233,9 +1233,9 @@ class ContextIO {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('delim', $params)) {
-			return $this->put($account, 'sources/' . $params['label'] . '/folders/' . $params['folder'], array('delim' => $params['delim']));
+			return $this->put($account, 'sources/' . $params['label'] . '/folders/' . urlencode($params['folder']), array('delim' => $params['delim']));
 		}
-		return $this->put($account, 'sources/' . $params['label'] . '/folders/' . $params['folder']);
+		return $this->put($account, 'sources/' . $params['label'] . '/folders/' . urlencode($params['folder']));
 	}
 
 	public function sendMessage($account, $params=array()) {
