@@ -479,7 +479,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) {
-			$params = $this->_filterParams($params, array('label','folder','limit','offset','type','include_body','include_headers','include_flags','flag_seen'), array('label','folder'));
+			$params = $this->_filterParams($params, array('label','folder','limit','offset','type','include_body','include_headers','include_flags','flag_seen','async','async_job_id'), array('label','folder'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
@@ -488,6 +488,9 @@ class ContextIO {
 		$folder = $params['folder'];
 		unset($params['label']);
 		unset($params['folder']);
+		if (array_key_exists('async_job_id', $params)) {
+			return $this->get($account, "sources/$source/folders/$folder/messages/" . $params['async_job_id']);
+		}
 		return $this->get($account, "sources/$source/folders/$folder/messages", $params);
 	}
 
