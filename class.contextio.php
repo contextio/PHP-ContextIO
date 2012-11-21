@@ -1331,6 +1331,16 @@ class ContextIO {
 	}
 
 	/**
+	 * Specify the API endpoint.
+	 * @param string $endPoint
+	 * @return boolean success
+	 */
+	public function setEndPoint($endPoint) {
+		$this->endPoint = $endPoint;
+		return true;
+	}
+
+	/**
 	 * Specify whether or not API calls should be made over a secure connection.
 	 * HTTPS is used on all calls by default.
 	 * @param bool $sslOn Set to false to make calls over HTTP, true to use HTTPS
