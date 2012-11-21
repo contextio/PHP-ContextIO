@@ -113,7 +113,7 @@ class ContextIO {
 	 * @link http://context.io/docs/2.0/connecttokens
 	 */
 	public function addConnectToken($account=null,$params=array()) {
-		$params = $this->_filterParams($params, array('service_level','email','callback_url','first_name','last_name'), array('callback_url'));
+		$params = $this->_filterParams($params, array('service_level','email','callback_url','first_name','last_name','source_sync_all_folders','source_callback_url'), array('callback_url'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
