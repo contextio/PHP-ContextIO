@@ -1,0 +1,14 @@
+{
+  "name": "cc-consulting/contextio",
+  "description": "Context.io package",
+  "type": "library",
+  "authors": [
+    {
+		  "name": "ContextIO",
+		  "homepage": "http://context.io/"
+	  }
+  ],
+  "autoload": {
+    "classmap": ["./"]
+  }
+}
