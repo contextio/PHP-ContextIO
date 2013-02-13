@@ -1264,12 +1264,14 @@ class ContextIO {
 			$params = array('label' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('label'), array('label'));
+			$params = $this->_filterParams($params, array('label','include_extended_counts'), array('label'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
 		}
-		return $this->get($account, 'sources/' . $params['label'] . '/folders');
+		$source = $params['label'];
+		unset($params['label']);
+		return $this->get($account, 'sources/' . $source . '/folders', $params);
 	}
 
 	public function listWebhooks($account) {
