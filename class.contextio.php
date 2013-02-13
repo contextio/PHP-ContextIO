@@ -1264,7 +1264,7 @@ class ContextIO {
 			$params = array('label' => $params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('label','include_extended_counts'), array('label'));
+			$params = $this->_filterParams($params, array('label','include_extended_counts','no_cache'), array('label'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
