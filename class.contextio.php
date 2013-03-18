@@ -1474,7 +1474,14 @@ class ContextIO {
 				curl_setopt($curl, CURLOPT_POST, true);
 				if (! is_null($parameters)) {
 					if (is_null($file)) {
-						curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($parameters));
+						if (is_string($parameters)) {
+							$httpHeadersToSet[] = 'Content-Length: ' . strlen($parameters);
+							$httpHeadersToSet[] = 'Content-Type: application/json';
+							curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters); 
+						}
+						else {
+							curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($parameters));
+						}
 					}
 					else {
 						$parameters[$file['field']] = $file['filename'];
@@ -1483,6 +1490,9 @@ class ContextIO {
 				}
 				elseif (! is_null($file)) {
 					curl_setopt($curl, CURLOPT_POSTFIELDS, array($file['field'] => $file['filename']));
+				}
+				else {
+					$httpHeadersToSet[] = 'Content-Length: 0';
 				}
 			}
 			else {
