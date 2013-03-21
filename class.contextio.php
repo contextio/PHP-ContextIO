@@ -786,16 +786,16 @@ class ContextIO {
 			}
 			$folderStr = json_encode($params['folders']);
 			if (array_key_exists('email_message_id', $params)) {
-				return $this->put($account, 'messages/' . urlencode($params['email_message_id']) . '/folders', $folderStr);
+				return $this->put($account, 'messages/' . urlencode($params['email_message_id']) . '/folders', $folderStr, array('Content-Type: application/json'));
 			}
 			elseif (array_key_exists('message_id', $params)) {
-				return $this->put($account, 'messages/' . $params['message_id'] . '/folders', $folderStr);
+				return $this->put($account, 'messages/' . $params['message_id'] . '/folders', $folderStr, array('Content-Type: application/json'));
 			}
 			elseif (array_key_exists('gmail_message_id', $params)) {
 				if (substr($params['gmail_message_id'],0,3) == 'gm-') {
-					return $this->put($account, 'messages/' . $params['gmail_message_id'] . '/folders', $folderStr);
+					return $this->put($account, 'messages/' . $params['gmail_message_id'] . '/folders', $folderStr, array('Content-Type: application/json'));
 				}
-				return $this->put($account, 'messages/gm-' . $params['gmail_message_id'] . '/folders', $folderStr);
+				return $this->put($account, 'messages/gm-' . $params['gmail_message_id'] . '/folders', $folderStr, array('Content-Type: application/json'));
 			}
 			else {
 				throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
@@ -803,8 +803,12 @@ class ContextIO {
 		}
 		else {
 			$addRemoveParams = array();
+			$convertToString = false;
 			foreach (array('add','remove') as $currentName) {
 				if (array_key_exists($currentName, $params)) {
+					if (is_array($params[$currentName])) {
+						$convertToString = true;
+					}
 					$addRemoveParams[$currentName] = $params[$currentName];
 				}
 			}
@@ -812,17 +816,41 @@ class ContextIO {
 				throw new InvalidArgumentException("must specify at least one of add,remove");
 			}
 
+			$httpHeadersToSet = array();
+			if ($convertToString) {
+				$newParams = '';
+				foreach ($addRemoveParams as $key => $value) {
+					if (!is_array($value)) {
+						if ($newParams != '') {
+							$newParams .= '&';
+						}
+						$newParams .= "$key=" . urlencode($value);
+					}
+					else {
+						foreach ($value as $currentValue) {
+							if ($newParams != '') {
+								$newParams .= '&';
+							}
+							$newParams .= $key . '[]=' . urlencode($currentValue);
+						}
+					}
+				}
+				$addRemoveParams = $newParams;
+				//$httpHeadersToSet[] = 'Content-Type: application/x-www-form-urlencoded';
+				$httpHeadersToSet[] = 'Content-Type: multipart/form-data';
+			}
+
 			if (array_key_exists('email_message_id', $params)) {
-				return $this->post($account, 'messages/' . urlencode($params['email_message_id']) . '/folders', $addRemoveParams);
+				return $this->post($account, 'messages/' . urlencode($params['email_message_id']) . '/folders', $addRemoveParams, null, $httpHeadersToSet);
 			}
 			elseif (array_key_exists('message_id', $params)) {
-				return $this->post($account, 'messages/' . $params['message_id'] . '/folders', $addRemoveParams);
+				return $this->post($account, 'messages/' . $params['message_id'] . '/folders', $addRemoveParams, null, $httpHeadersToSet);
 			}
 			elseif (array_key_exists('gmail_message_id', $params)) {
 				if (substr($params['gmail_message_id'],0,3) == 'gm-') {
-					return $this->post($account, 'messages/' . $params['gmail_message_id'] . '/folders', $addRemoveParams);
+					return $this->post($account, 'messages/' . $params['gmail_message_id'] . '/folders', $addRemoveParams, null, $httpHeadersToSet);
 				}
-				return $this->post($account, 'messages/gm-' . $params['gmail_message_id'] . '/folders', $addRemoveParams);
+				return $this->post($account, 'messages/gm-' . $params['gmail_message_id'] . '/folders', $addRemoveParams, null, $httpHeadersToSet);
 			}
 			else {
 				throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
@@ -1236,9 +1264,9 @@ class ContextIO {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('delim', $params)) {
-			return $this->put($account, 'sources/' . $params['label'] . '/folders/' . urlencode($params['folder']), array('delim' => $params['delim']));
+			return $this->put($account, 'sources/' . $params['label'] . '/folders?delim=' . urlencode($params['delim']), json_encode($params['folders']), array('Content-Type: application/json'));
 		}
-		return $this->put($account, 'sources/' . $params['label'] . '/folders/' . urlencode($params['folder']));
+		return $this->post($account, 'sources/' . $params['label'] . '/folders', json_encode($params['folders']), null, array('Content-Type: application/json'));
 	}
 
 	public function sendMessage($account, $params=array()) {
@@ -1419,19 +1447,19 @@ class ContextIO {
 		}
 	}
 
-	protected function put($account, $action, $parameters=null) {
-		return $this->_doCall('PUT', $account, $action, $parameters);
+	protected function put($account, $action, $parameters=null, $httpHeadersToSet=array()) {
+		return $this->_doCall('PUT', $account, $action, $parameters, null, null, $httpHeadersToSet);
 	}
 
-	protected function post($account, $action='', $parameters=null, $file=null) {
-		return $this->_doCall('POST', $account, $action, $parameters, $file);
+	protected function post($account, $action='', $parameters=null, $file=null, $httpHeadersToSet=array()) {
+		return $this->_doCall('POST', $account, $action, $parameters, $file, null, $httpHeadersToSet);
 	}
 
 	protected function delete($account, $action='', $parameters=null) {
 		return $this->_doCall('DELETE', $account, $action, $parameters);
 	}
 
-	protected function _doCall($httpMethod, $account, $action, $parameters=null, $file=null, $acceptableContentTypes=null) {
+	protected function _doCall($httpMethod, $account, $action, $parameters=null, $file=null, $acceptableContentTypes=null, $httpHeadersToSet=array()) {
 		$consumer = new ContextIOExtLib\OAuthConsumer($this->oauthKey, $this->oauthSecret);
 		if (! is_null($account)) {
 			$action = 'accounts/' . $account . '/' . $action;
@@ -1448,7 +1476,6 @@ class ContextIO {
 		$sig_method = new ContextIOExtLib\OAuthSignatureMethod_HMAC_SHA1();
 		$req->sign_request($sig_method, $consumer, null);
 
-		$httpHeadersToSet = array();
 		//get data using signed url
 		if ($this->authHeaders) {
 			if ($httpMethod != 'POST') {
@@ -1476,7 +1503,6 @@ class ContextIO {
 					if (is_null($file)) {
 						if (is_string($parameters)) {
 							$httpHeadersToSet[] = 'Content-Length: ' . strlen($parameters);
-							$httpHeadersToSet[] = 'Content-Type: application/json';
 							curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters); 
 						}
 						else {
@@ -1499,7 +1525,6 @@ class ContextIO {
 				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $httpMethod);
 				if (($httpMethod == 'PUT') && is_string($parameters)) {
 					$httpHeadersToSet[] = 'Content-Length: ' . strlen($parameters);
-					$httpHeadersToSet[] = 'Content-Type: application/json';
 					curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters); 
 				}
 			}
