@@ -1035,6 +1035,75 @@ class ContextIO {
 		}
 	}
 
+	/**
+	 * Sets the message folders of a thread.
+	 * A thread can be identified by the value of its Gmail-ThreadId
+	 * @param string $account accountId of the mailbox you want to query
+	 * @param array[string]mixed $params Query parameters for the API call: 'gmail_thread_id'
+	 * @return ContextIOResponse
+	 */
+	public function setThreadFolders($account, $params) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		$params = $this->_filterParams($params, array('gmail_thread_id', 'add','remove','folders'), array('gmail_thread_id'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
+		$gmailThreadId = $params['gmail_thread_id'];
+		if (! substr($params['gmail_thread_id'],0,3) == 'gm-') {
+			$gmailThreadId = 'gm-' . $gmailThreadId;
+		}
+		if (array_key_exists('folders', $params)) {
+			if (! is_array($params['folders'])) {
+				throw new InvalidArgumentException("folders must be array");
+			}
+			$folderStr = json_encode($params['folders']);
+			return $this->put($account, 'threads/' . $gmailThreadId . '/folders', $folderStr, array('Content-Type: application/json'));
+		}
+		else {
+			$addRemoveParams = array();
+			$convertToString = false;
+			foreach (array('add','remove') as $currentName) {
+				if (array_key_exists($currentName, $params)) {
+					if (is_array($params[$currentName])) {
+						$convertToString = true;
+					}
+					$addRemoveParams[$currentName] = $params[$currentName];
+				}
+			}
+			if (count(array_keys($addRemoveParams)) == 0) {
+				throw new InvalidArgumentException("must specify at least one of add,remove");
+			}
+
+			$httpHeadersToSet = array();
+			if ($convertToString) {
+				$newParams = '';
+				foreach ($addRemoveParams as $key => $value) {
+					if (!is_array($value)) {
+						if ($newParams != '') {
+							$newParams .= '&';
+						}
+						$newParams .= "$key=" . urlencode($value);
+					}
+					else {
+						foreach ($value as $currentValue) {
+							if ($newParams != '') {
+								$newParams .= '&';
+							}
+							$newParams .= $key . '[]=' . urlencode($currentValue);
+						}
+					}
+				}
+				$addRemoveParams = $newParams;
+				//$httpHeadersToSet[] = 'Content-Type: application/x-www-form-urlencoded';
+				$httpHeadersToSet[] = 'Content-Type: multipart/form-data';
+			}
+
+			return $this->post($account, 'threads/' . $gmailThreadId . '/folders', $addRemoveParams, null, $httpHeadersToSet);
+		}
+	}
+
 
 	public function addAccount($params) {
 		$params = $this->_filterParams($params, array('email','first_name','last_name','type','server','username','provider_consumer_key','provider_token','provider_token_secret','service_level','sync_period','password','use_ssl','port','callback_url'), array('email'));
