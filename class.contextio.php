@@ -818,26 +818,7 @@ class ContextIO {
 
 			$httpHeadersToSet = array();
 			if ($convertToString) {
-				$newParams = '';
-				foreach ($addRemoveParams as $key => $value) {
-					if (!is_array($value)) {
-						if ($newParams != '') {
-							$newParams .= '&';
-						}
-						$newParams .= "$key=" . urlencode($value);
-					}
-					else {
-						foreach ($value as $currentValue) {
-							if ($newParams != '') {
-								$newParams .= '&';
-							}
-							$newParams .= $key . '[]=' . urlencode($currentValue);
-						}
-					}
-				}
-				$addRemoveParams = $newParams;
-				//$httpHeadersToSet[] = 'Content-Type: application/x-www-form-urlencoded';
-				$httpHeadersToSet[] = 'Content-Type: multipart/form-data';
+				$httpHeadersToSet[] = 'Content-Type: application/x-www-form-urlencoded';
 			}
 
 			if (array_key_exists('email_message_id', $params)) {
@@ -1078,26 +1059,7 @@ class ContextIO {
 
 			$httpHeadersToSet = array();
 			if ($convertToString) {
-				$newParams = '';
-				foreach ($addRemoveParams as $key => $value) {
-					if (!is_array($value)) {
-						if ($newParams != '') {
-							$newParams .= '&';
-						}
-						$newParams .= "$key=" . urlencode($value);
-					}
-					else {
-						foreach ($value as $currentValue) {
-							if ($newParams != '') {
-								$newParams .= '&';
-							}
-							$newParams .= $key . '[]=' . urlencode($currentValue);
-						}
-					}
-				}
-				$addRemoveParams = $newParams;
-				//$httpHeadersToSet[] = 'Content-Type: application/x-www-form-urlencoded';
-				$httpHeadersToSet[] = 'Content-Type: multipart/form-data';
+				$httpHeadersToSet[] = 'Content-Type: application/x-www-form-urlencoded';
 			}
 
 			return $this->post($account, 'threads/' . $gmailThreadId . '/folders', $addRemoveParams, null, $httpHeadersToSet);
@@ -1541,7 +1503,43 @@ class ContextIO {
 		if ($isMultiPartPost || is_string($parameters)) {
 			$this->authHeaders = true;
 		}
-		$req = ContextIOExtLib\OAuthRequest::from_consumer_and_token($consumer, null, $httpMethod, $baseUrl, ($isMultiPartPost || is_string($parameters)) ? array() : $parameters);
+		$signatureParams = $parameters;
+		if ($isMultiPartPost) {
+			$signatureParams = array();
+		}
+		if (is_string($parameters)) {
+			$signatureParams = array();
+		}
+		if (($httpMethod != 'GET') && is_array($parameters)) {
+			if (! in_array('Content-Type: application/x-www-form-urlencoded', $httpHeadersToSet)) {
+				$signatureParams = array();
+			}
+			else {
+				$newParams = '';
+				foreach ($parameters as $key => $value) {
+					if (!is_array($value)) {
+						if ($newParams != '') {
+							$newParams .= '&';
+						}
+						$newParams .= "$key=" . urlencode($value);
+					}
+					else {
+						unset($signatureParams[$key]);
+						$signatureParams[$key . '[]'] = $value;
+						foreach ($value as $currentValue) {
+							if ($newParams != '') {
+								$newParams .= '&';
+							}
+							$newParams .= $key . '[]=' . urlencode($currentValue);
+						}
+					}
+				}
+				$parameters = $newParams;
+			}
+
+		}
+
+		$req = ContextIOExtLib\OAuthRequest::from_consumer_and_token($consumer, null, $httpMethod, $baseUrl, $signatureParams);
 		$sig_method = new ContextIOExtLib\OAuthSignatureMethod_HMAC_SHA1();
 		$req->sign_request($sig_method, $consumer, null);
 
@@ -1572,16 +1570,12 @@ class ContextIO {
 					if (is_null($file)) {
 						if (is_string($parameters)) {
 							$httpHeadersToSet[] = 'Content-Length: ' . strlen($parameters);
-							curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters); 
-						}
-						else {
-							curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($parameters));
 						}
 					}
 					else {
 						$parameters[$file['field']] = $file['filename'];
-						curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters);
 					}
+					curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters);
 				}
 				elseif (! is_null($file)) {
 					curl_setopt($curl, CURLOPT_POSTFIELDS, array($file['field'] => $file['filename']));
@@ -1592,8 +1586,10 @@ class ContextIO {
 			}
 			else {
 				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $httpMethod);
-				if (($httpMethod == 'PUT') && is_string($parameters)) {
-					$httpHeadersToSet[] = 'Content-Length: ' . strlen($parameters);
+				if ($httpMethod == 'PUT') {
+					if (is_string($parameters)) {
+						$httpHeadersToSet[] = 'Content-Length: ' . strlen($parameters);
+					}
 					curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters); 
 				}
 			}
