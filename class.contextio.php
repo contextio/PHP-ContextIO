@@ -922,6 +922,22 @@ class ContextIO {
 			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
 		}
 	}
+	
+	/**
+	 * Returns all messages for a particular account
+	 * The inbox of interest can be identified by its accountId
+	 * @link http://context.io/docs/2.0/accounts/messages#id-get
+	 * @param string $account accountId of the mailbox you want to query
+	 * @return ContextIOResponse
+	 */
+	public function getMessages($account) {
+		if (is_null($account) || is_string($account) || (! strpos($account, '@') == false)) {
+			throw new InvalidArgumentException('account must be a string representing accountId');
+		}
+		if (is_string($account)) {
+			return $this->get($account, 'messages/');
+		}
+	}
 
 	/**
 	 * Returns message and contact information about a given email thread.
