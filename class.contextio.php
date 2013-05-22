@@ -922,54 +922,6 @@ class ContextIO {
 			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
 		}
 	}
-	
-	/**
-	 * Returns all messages for a particular account
-	 * The inbox of interest can be identified by its accountId
-	 * @link http://context.io/docs/2.0/accounts/messages#id-get
-	 * @param string $account accountId of the mailbox you want to query
-	 * @return ContextIOResponse
-	 */
-	public function getMessages($account) {
-		if (is_null($account) || is_string($account) || (! strpos($account, '@') == false)) {
-			throw new InvalidArgumentException('account must be a string representing accountId');
-		}
-		if (is_string($account)) {
-			return $this->get($account, 'messages/');
-		}
-	}
-	
-		/**
-	 * Returns all messages for a particular account filter by parameters you specify
-	 * The inbox of interest can be identified by its accountId
-	 * @link http://context.io/docs/2.0/accounts/messages#id-get
-	 * @param string $account accountId of the mailbox you want to query
-	 * @param array[string]mixed $params Query parameters for the API call: 'subject', 'email', 'to', 'from','cc','bcc', 'folder',
-			                                                                    'date_before', 'date_after', 'indexed_before', 'indexed_after',
-			                                                                    'include_thread_size', 'include_body', 'include_headers', 'include_flags',
-			                                                                    'body_type', 'sort_order', 'limit', 'offset'
-	 * @return ContextIOResponse
-	 */
-	public function getMessages($account, $params) {
-		if (is_null($account) || is_string($account) || (! strpos($account, '@') == false)) {
-			throw new InvalidArgumentException('account must be a string representing accountId');
-		}
-		if (is_string($account)) {
-			return $this->get($account, 'messages/');
-		}
-		if(is_string($params)) {
-			return $this->get($account, 'messages/' . urlencode($params));
-		}
-		else {
-			$params = $this->_filterParams($params, array('subject', 'email', 'to', 'from','cc','bcc', 'folder',
-			                                              'date_before', 'date_after', 'indexed_before', 'indexed_after',
-			                                              'include_thread_size', 'include_body', 'include_headers', 'include_flags',
-			                                              'body_type', 'sort_order', 'limit', 'offset'));
-			if ($params === false) {
-				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
-			}
-		}
-	}
 
 	/**
 	 * Returns message and contact information about a given email thread.
