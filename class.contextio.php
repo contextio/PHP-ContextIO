@@ -586,6 +586,36 @@ class ContextIO {
 		}
 	}
 
+	public function deleteMessage($account, $params) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		if (is_string($params)) {
+			return $this->delete($account, 'messages/' . urlencode($params));
+		}
+		else {
+			$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id'));
+			if ($params === false) {
+				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+			}
+			if (array_key_exists('message_id', $params)) {
+				return $this->delete($account, 'messages/' . $params['message_id']);
+			}
+			elseif (array_key_exists('email_message_id', $params)) {
+				return $this->delete($account, 'messages/' . urlencode($params['email_message_id']));
+			}
+			elseif (array_key_exists('gmail_message_id', $params)) {
+				if (substr($params['gmail_message_id'],0,3) == 'gm-') {
+					return $this->delete($account, 'messages/' . $params['gmail_message_id']);
+				}
+				return $this->delete($account, 'messages/gm-' . $params['gmail_message_id']);
+			}
+			else {
+				throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
+			}
+		}
+	}
+
 	/**
 	 * Returns the message headers of a message.
 	 * A message can be identified by the value of its Message-ID header
