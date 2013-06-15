@@ -1203,7 +1203,7 @@ class ContextIO {
 		return $this->post($account, 'sources/' . $params['label'], $params);
 	}
 
-	public function resetSourceStatus($account, $params) {
+	public function resetSourceStatus($account, $params, $force=false) {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
@@ -1215,6 +1215,9 @@ class ContextIO {
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
+		}
+		if ($force) {
+			return $this->post($account, 'sources/' . $params['label'], array('force_status_check' => 1));
 		}
 		return $this->post($account, 'sources/' . $params['label'], array('status' => 1));
 	}
