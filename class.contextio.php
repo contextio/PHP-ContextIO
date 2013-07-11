@@ -117,7 +117,7 @@ class ContextIO {
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
-		return $this->post($account, 'connect_tokens', $params);
+		return $this->post($account, 'connect_tokens', $params, null, array('Content-Type: application/x-www-form-urlencoded'));
 	}
 
 	/**
