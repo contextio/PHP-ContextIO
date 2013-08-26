@@ -48,7 +48,7 @@ foreach ($r->getData() as $document) {
 }
 
 // EXAMPLE 3
-// Download all attachments with a file name that contains the word 'proposal'
+// Download all attachments with a file name that matches 'creenshot'
 $saveToDir = dirname(__FILE__)."/".mt_rand(100,999);
 mkdir($saveToDir);
 
