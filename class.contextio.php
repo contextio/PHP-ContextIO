@@ -1327,10 +1327,11 @@ class ContextIO {
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
+		$path = 'sources/' . urlencode($params['label']) . '/folders/' . urlencode($params['folder']);
 		if (array_key_exists('delim', $params)) {
-			return $this->put($account, 'sources/' . $params['label'] . '/folders?delim=' . urlencode($params['delim']), json_encode($params['folders']), array('Content-Type: application/json'));
+			$path .= '?' . urlencode($params['delim']);
 		}
-		return $this->post($account, 'sources/' . $params['label'] . '/folders', json_encode($params['folders']), null, array('Content-Type: application/json'));
+		return $this->put($account, $path);
 	}
 
 	public function sendMessage($account, $params=array()) {
