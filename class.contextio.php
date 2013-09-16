@@ -518,9 +518,20 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('dst_label','dst_folder','src_file','message_id','email_message_id','gmail_message_id','flag_seen','flag_answered','flag_flagged','flag_deleted','flag_draft'), array('dst_label','dst_folder'));
+		$params = $this->_filterParams($params, array('dst_label','dst_folder','src_file','message_id','email_message_id','gmail_message_id','flag_seen','flag_answered','flag_flagged','flag_deleted','flag_draft','move'), array('dst_label','dst_folder'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
+		if (array_key_exists('move', $params)) {
+			if (($params['move'] === true) || ($params['move'] === 1)) {
+				$params['move'] = 1;
+			}
+			elseif (($params['move'] === false) || ($params['move'] === 0)) {
+				unset($params['move']);
+			}
+			else {
+				throw new InvalidArgumentException("move parameter must be boolean or 0/1");
+			}
 		}
 		if (array_key_exists('src_file', $params)) {
 			$params['src_file'] = realpath($params['src_file']);
