@@ -518,7 +518,11 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('dst_label','dst_folder','src_file','message_id','email_message_id','gmail_message_id','flag_seen','flag_answered','flag_flagged','flag_deleted','flag_draft','move'), array('dst_label','dst_folder'));
+		$requiredParams = array('dst_folder');
+		if (array_key_exists('src_file', $params)) {
+			$requiredParams[] = 'dst_label';
+		}
+		$params = $this->_filterParams($params, array('dst_label','dst_folder','src_file','message_id','email_message_id','gmail_message_id','flag_seen','flag_answered','flag_flagged','flag_deleted','flag_draft','move'), $requiredParams);
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
