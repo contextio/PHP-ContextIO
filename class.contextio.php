@@ -523,10 +523,10 @@ class ContextIO {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('move', $params)) {
-			if (($params['move'] === true) || ($params['move'] === 1)) {
+			if (($params['move'] === true) || ($params['move'] == 1)) {
 				$params['move'] = 1;
 			}
-			elseif (($params['move'] === false) || ($params['move'] === 0)) {
+			elseif (($params['move'] === false) || ($params['move'] == 0)) {
 				unset($params['move']);
 			}
 			else {
