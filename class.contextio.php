@@ -1349,6 +1349,20 @@ class ContextIO {
 		return $this->put($account, $path);
 	}
 
+	public function deleteFolderFromSource($account, $params=array()) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		$params = $this->_filterParams($params, array('label','folder','delim'), array('label','folder'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
+		if (array_key_exists('delim', $params)) {
+			return $this->delete($account, 'sources/' . $params['label'] . '/folders/' . urlencode($params['folder']), array('delim' => $params['delim']));
+		}
+		return $this->delete($account, 'sources/' . $params['label'] . '/folders/' . urlencode($params['folder']));
+	}
+
 	public function sendMessage($account, $params=array()) {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
