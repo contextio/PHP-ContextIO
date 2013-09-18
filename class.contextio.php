@@ -202,7 +202,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) {
-			$params = $this->_filterParams($params, array('active_after','active_before','limit','offset','search'));
+			$params = $this->_filterParams($params, array('active_after','active_before','limit','offset','search','sort_by','sort_order'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
