@@ -113,7 +113,7 @@ class ContextIO {
 	 * @link http://context.io/docs/2.0/connecttokens
 	 */
 	public function addConnectToken($account=null,$params=array()) {
-		$params = $this->_filterParams($params, array('service_level','email','callback_url','first_name','last_name','source_expunge_on_deleted_flag','source_sync_all_folders','source_raw_file_list','source_callback_url'), array('callback_url'));
+		$params = $this->_filterParams($params, array('service_level','email','callback_url','first_name','last_name','source_expunge_on_deleted_flag','source_sync_all_folders','source_callback_url','source_sync_flags','source_raw_file_list'), array('callback_url'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
@@ -202,7 +202,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) {
-			$params = $this->_filterParams($params, array('active_after','active_before','limit','offset','search'));
+			$params = $this->_filterParams($params, array('active_after','active_before','limit','offset','search','sort_by','sort_order'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
@@ -1113,7 +1113,7 @@ class ContextIO {
 
 
 	public function addAccount($params) {
-		$params = $this->_filterParams($params, array('email','first_name','last_name','type','server','username','provider_consumer_key','provider_token','provider_token_secret','service_level','sync_period','password','use_ssl','port','callback_url','expunge_on_deleted_flag'), array('email'));
+		$params = $this->_filterParams($params, array('email','first_name','last_name','type','server','username','provider_consumer_key','provider_token','provider_token_secret','service_level','sync_period','password','use_ssl','port','callback_url','sync_flags','raw_file_list','expunge_on_deleted_flag'), array('email'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
@@ -1211,7 +1211,7 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('provider_token', 'provider_token_secret', 'provider_refresh_token', 'password', 'provider_consumer_key', 'label', 'mailboxes', 'sync_all_folders', 'service_level','sync_period'), array('label'));
+		$params = $this->_filterParams($params, array('provider_token', 'provider_token_secret', 'provider_refresh_token', 'password', 'provider_consumer_key', 'label', 'mailboxes', 'expunge_on_deleted_flag', 'sync_all_folders', 'service_level','sync_period'), array('label'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
@@ -1347,6 +1347,20 @@ class ContextIO {
 			$path .= '?' . urlencode($params['delim']);
 		}
 		return $this->put($account, $path);
+	}
+
+	public function deleteFolderFromSource($account, $params=array()) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		$params = $this->_filterParams($params, array('label','folder','delim'), array('label','folder'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
+		if (array_key_exists('delim', $params)) {
+			return $this->delete($account, 'sources/' . $params['label'] . '/folders/' . urlencode($params['folder']), array('delim' => $params['delim']));
+		}
+		return $this->delete($account, 'sources/' . $params['label'] . '/folders/' . urlencode($params['folder']));
 	}
 
 	public function sendMessage($account, $params=array()) {
