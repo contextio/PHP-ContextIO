@@ -1396,6 +1396,17 @@ class ContextIO {
 		return $this->get($account, 'sources/' . $source . '/folders', $params);
 	}
 
+	public function getSourceFolder($account, $params=array()) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		$params = $this->_filterParams($params, array('label','folder'), array('label','folder'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
+		return $this->get($account, 'sources/' . urlencode($params['label']) . '/folders/' . urlencode($params['folder']));
+	}
+
 	public function listWebhooks($account) {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
