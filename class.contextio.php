@@ -1062,6 +1062,27 @@ class ContextIO {
 	}
 
 	/**
+	 * delete thread
+	 * @link http://context.io/docs/2.0/accounts/threads
+	 * @param string $account accountId of the mailbox you want to query
+	 * @param array[string]string $params Query parameters for the API call: 'gmailthreadid'
+	 * @return ContextIOResponse
+	 */
+	public function deleteThread($account, $params) {
+		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
+			throw new InvalidArgumentException('account must be string representing accountId');
+		}
+		$params = $this->_filterParams($params, array('gmail_thread_id'), array('gmail_thread_id'));
+		if ($params === false) {
+			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+		}
+		if (substr($params['gmail_thread_id'],0,3) == 'gm-') {
+			return $this->delete($account, 'threads/' . $params['gmail_thread_id']);
+		}
+		return $this->delete($account, 'threads/gm-' . $params['gmail_thread_id']);
+	}
+
+	/**
 	 * Sets the message folders of a thread.
 	 * A thread can be identified by the value of its Gmail-ThreadId
 	 * @param string $account accountId of the mailbox you want to query
