@@ -282,7 +282,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) {
-			$params = $this->_filterParams($params, array('indexed_before', 'indexed_after','date_before','date_after','file_name','limit', 'offset', 'email', 'to','from','cc','bcc','group_by_revisions','include_person_info'));
+			$params = $this->_filterParams($params, array('indexed_before', 'indexed_after','date_before','date_after','file_name','limit', 'offset', 'email', 'to','from','cc','bcc','group_by_revisions','include_person_info','source'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
@@ -506,7 +506,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_array($params)) {
-			$params = $this->_filterParams($params, array('subject', 'date_before', 'date_after', 'indexed_after', 'indexed_before', 'limit', 'offset','email', 'to','from','cc','bcc','email_message_id','type','include_body','include_headers','include_flags','folder','gm_search','include_person_info','file_name'));
+			$params = $this->_filterParams($params, array('subject', 'date_before', 'date_after', 'indexed_after', 'indexed_before', 'limit', 'offset','email', 'to','from','cc','bcc','email_message_id','type','include_body','include_headers','include_flags','folder','gm_search','include_person_info','file_name', 'source'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
