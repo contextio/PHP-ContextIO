@@ -648,17 +648,21 @@ class ContextIO {
 		}
 		else {
 			$params = $this->_filterParams($params, array('message_id','email_message_id', 'gmail_message_id', 'raw'), array());
+			$additionalParams = null;
+			if (array_key_exists('raw', $params)) {
+				$additionalParams = array('raw' => $params['raw']);
+			}
 			if (array_key_exists('message_id', $params)) {
-				return $this->get($account, 'messages/' . $params['message_id']. '/headers', $params);
+				return $this->get($account, 'messages/' . $params['message_id']. '/headers', $additionalParams);
 			}
 			elseif (array_key_exists('email_message_id', $params)) {
-				return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/headers', $params);
+				return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/headers', $additionalParams);
 			}
 			elseif (array_key_exists('gmail_message_id', $params)) {
 				if (substr($params['gmail_message_id'],0,3) == 'gm-') {
-					return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/headers', $params);
+					return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/headers', $additionalParams);
 				}
-				return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/headers', $params);
+				return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/headers', $additionalParams);
 			}
 			else {
 				throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
@@ -951,17 +955,21 @@ class ContextIO {
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
+		$additionalParams = null;
+		if (array_key_exists('type', $params)) {
+			$additionalParams = array('type' => $params['type']);
+		}
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/body', $params);
+			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/body', $additionalParams);
 		}
 		elseif (array_key_exists('message_id', $params)) {
-			return $this->get($account, 'messages/' . $params['message_id'] . '/body', $params);
+			return $this->get($account, 'messages/' . $params['message_id'] . '/body', $additionalParams);
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
-				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/body', $params);
+				return $this->get($account, 'messages/' . $params['gmail_message_id'] . '/body', $additionalParams);
 			}
-			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/body', $params);
+			return $this->get($account, 'messages/gm-' . $params['gmail_message_id'] . '/body', $additionalParams);
 		}
 		else {
 			throw new InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
