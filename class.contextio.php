@@ -550,7 +550,7 @@ class ContextIO {
 			return $this->post($account, 'messages/' . $params['message_id'], $params);
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
-			return $this->post($account, 'messages/' . urlencode($params['email_message_id']), $params);
+			return $this->post($account, 'messages/' . rawurlencode($params['email_message_id']), $params);
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -576,7 +576,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . urlencode($params));
+			return $this->get($account, 'messages/' . rawurlencode($params));
 		}
 		else {
 			$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'include_person_info', 'type','include_body','include_headers','include_flags'));
@@ -587,7 +587,7 @@ class ContextIO {
 				return $this->get($account, 'messages/' . $params['message_id'], $params);
 			}
 			elseif (array_key_exists('email_message_id', $params)) {
-				return $this->get($account, 'messages/' . urlencode($params['email_message_id']), $params);
+				return $this->get($account, 'messages/' . rawurlencode($params['email_message_id']), $params);
 			}
 			elseif (array_key_exists('gmail_message_id', $params)) {
 				if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -606,7 +606,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->delete($account, 'messages/' . urlencode($params));
+			return $this->delete($account, 'messages/' . rawurlencode($params));
 		}
 		else {
 			$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id'));
@@ -617,7 +617,7 @@ class ContextIO {
 				return $this->delete($account, 'messages/' . $params['message_id']);
 			}
 			elseif (array_key_exists('email_message_id', $params)) {
-				return $this->delete($account, 'messages/' . urlencode($params['email_message_id']));
+				return $this->delete($account, 'messages/' . rawurlencode($params['email_message_id']));
 			}
 			elseif (array_key_exists('gmail_message_id', $params)) {
 				if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -644,7 +644,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . urlencode($params) . '/headers');
+			return $this->get($account, 'messages/' . rawurlencode($params) . '/headers');
 		}
 		else {
 			$params = $this->_filterParams($params, array('message_id','email_message_id', 'gmail_message_id', 'raw'), array());
@@ -656,7 +656,7 @@ class ContextIO {
 				return $this->get($account, 'messages/' . $params['message_id']. '/headers', $additionalParams);
 			}
 			elseif (array_key_exists('email_message_id', $params)) {
-				return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/headers', $additionalParams);
+				return $this->get($account, 'messages/' . rawurlencode($params['email_message_id']) . '/headers', $additionalParams);
 			}
 			elseif (array_key_exists('gmail_message_id', $params)) {
 				if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -683,13 +683,13 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			$url = 'messages/' . urlencode($params) . '/source';
+			$url = 'messages/' . rawurlencode($params) . '/source';
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			$url = 'messages/' . $params['message_id']. '/source';
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
-			$url = 'messages/' . urlencode($params['email_message_id']) . '/source';
+			$url = 'messages/' . rawurlencode($params['email_message_id']) . '/source';
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -763,13 +763,13 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . urlencode($params) . '/flags');
+			return $this->get($account, 'messages/' . rawurlencode($params) . '/flags');
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id']. '/flags');
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/flags');
+			return $this->get($account, 'messages/' . rawurlencode($params['email_message_id']) . '/flags');
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -795,13 +795,13 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . urlencode($params) . '/folders');
+			return $this->get($account, 'messages/' . rawurlencode($params) . '/folders');
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id']. '/folders');
 		}
 		elseif (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/folders');
+			return $this->get($account, 'messages/' . rawurlencode($params['email_message_id']) . '/folders');
 		}
 		elseif (array_key_exists('gmail_message_id', $params)) {
 			if (substr($params['gmail_message_id'],0,3) == 'gm-') {
@@ -835,7 +835,7 @@ class ContextIO {
 			}
 			$folderStr = json_encode($params['folders']);
 			if (array_key_exists('email_message_id', $params)) {
-				return $this->put($account, 'messages/' . urlencode($params['email_message_id']) . '/folders', $folderStr, array('Content-Type: application/json'));
+				return $this->put($account, 'messages/' . rawurlencode($params['email_message_id']) . '/folders', $folderStr, array('Content-Type: application/json'));
 			}
 			elseif (array_key_exists('message_id', $params)) {
 				return $this->put($account, 'messages/' . $params['message_id'] . '/folders', $folderStr, array('Content-Type: application/json'));
@@ -871,7 +871,7 @@ class ContextIO {
 			}
 
 			if (array_key_exists('email_message_id', $params)) {
-				return $this->post($account, 'messages/' . urlencode($params['email_message_id']) . '/folders', $addRemoveParams, null, $httpHeadersToSet);
+				return $this->post($account, 'messages/' . rawurlencode($params['email_message_id']) . '/folders', $addRemoveParams, null, $httpHeadersToSet);
 			}
 			elseif (array_key_exists('message_id', $params)) {
 				return $this->post($account, 'messages/' . $params['message_id'] . '/folders', $addRemoveParams, null, $httpHeadersToSet);
@@ -918,7 +918,7 @@ class ContextIO {
 		}
 
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->post($account, 'messages/' . urlencode($params['email_message_id']) . '/flags', $flagParams);
+			return $this->post($account, 'messages/' . rawurlencode($params['email_message_id']) . '/flags', $flagParams);
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->post($account, 'messages/' . $params['message_id'] . '/flags', $flagParams);
@@ -949,7 +949,7 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . urlencode($params) . '/body');
+			return $this->get($account, 'messages/' . rawurlencode($params) . '/body');
 		}
 		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'type'));
 		if ($params === false) {
@@ -960,7 +960,7 @@ class ContextIO {
 			$additionalParams = array('type' => $params['type']);
 		}
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/body', $additionalParams);
+			return $this->get($account, 'messages/' . rawurlencode($params['email_message_id']) . '/body', $additionalParams);
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id'] . '/body', $additionalParams);
@@ -988,14 +988,14 @@ class ContextIO {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
 		if (is_string($params)) {
-			return $this->get($account, 'messages/' . urlencode($params) . '/thread');
+			return $this->get($account, 'messages/' . rawurlencode($params) . '/thread');
 		}
 		$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'include_body', 'include_headers', 'include_flags', 'type', 'include_person_info'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/thread', $params);
+			return $this->get($account, 'messages/' . rawurlencode($params['email_message_id']) . '/thread', $params);
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id'] . '/thread', $params);
@@ -1047,7 +1047,7 @@ class ContextIO {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('email_message_id', $params)) {
-			return $this->get($account, 'messages/' . urlencode($params['email_message_id']) . '/thread', $params);
+			return $this->get($account, 'messages/' . rawurlencode($params['email_message_id']) . '/thread', $params);
 		}
 		elseif (array_key_exists('message_id', $params)) {
 			return $this->get($account, 'messages/' . $params['message_id'] . '/thread', $params);
@@ -1371,7 +1371,7 @@ class ContextIO {
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
-		$path = 'sources/' . urlencode($params['label']) . '/folders/' . urlencode($params['folder']);
+		$path = 'sources/' . rawurlencode($params['label']) . '/folders/' . rawurlencode($params['folder']);
 		if (array_key_exists('delim', $params)) {
 			$path .= '?' . urlencode($params['delim']);
 		}
@@ -1387,9 +1387,9 @@ class ContextIO {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
 		if (array_key_exists('delim', $params)) {
-			return $this->delete($account, 'sources/' . $params['label'] . '/folders/' . urlencode($params['folder']), array('delim' => $params['delim']));
+			return $this->delete($account, 'sources/' . $params['label'] . '/folders/' . rawurlencode($params['folder']), array('delim' => $params['delim']));
 		}
-		return $this->delete($account, 'sources/' . $params['label'] . '/folders/' . urlencode($params['folder']));
+		return $this->delete($account, 'sources/' . $params['label'] . '/folders/' . rawurlencode($params['folder']));
 	}
 
 	public function sendMessage($account, $params=array()) {
@@ -1433,7 +1433,7 @@ class ContextIO {
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
-		return $this->get($account, 'sources/' . urlencode($params['label']) . '/folders/' . urlencode($params['folder']));
+		return $this->get($account, 'sources/' . rawurlencode($params['label']) . '/folders/' . rawurlencode($params['folder']));
 	}
 
 	public function listWebhooks($account) {
