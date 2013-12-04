@@ -579,7 +579,7 @@ class ContextIO {
 			return $this->get($account, 'messages/' . rawurlencode($params));
 		}
 		else {
-			$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'include_person_info', 'type','include_body','include_headers','include_flags'));
+			$params = $this->_filterParams($params, array('message_id', 'email_message_id', 'gmail_message_id', 'include_person_info', 'type','include_thread_size','include_body','include_headers','include_flags','body_type','include_source'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
