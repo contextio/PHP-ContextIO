@@ -520,9 +520,9 @@ class ContextIO {
 		}
 		$requiredParams = array('dst_folder');
 		if (array_key_exists('src_file', $params)) {
-			$requiredParams[] = 'dst_label';
+			// $requiredParams[] = 'dst_label';
 		}
-		$params = $this->_filterParams($params, array('dst_label','dst_folder','src_file','message_id','email_message_id','gmail_message_id','flag_seen','flag_answered','flag_flagged','flag_deleted','flag_draft','move'), $requiredParams);
+		$params = $this->_filterParams($params, array('dst_source','dst_label','dst_folder','src_file','message_id','email_message_id','gmail_message_id','flag_seen','flag_answered','flag_flagged','flag_deleted','flag_draft','move'), $requiredParams);
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
