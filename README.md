@@ -25,7 +25,7 @@ You can install the library by adding it as a dependency to your composer.json.
   "contextio/php-contextio": "dev-master"
 }
 
-EXAMPLES
+## Examples
 
 See examples.php
 
