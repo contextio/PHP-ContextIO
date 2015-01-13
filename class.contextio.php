@@ -1475,7 +1475,7 @@ class ContextIO {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
 		}
-		$params = $this->_filterParams($params, array('filter_to', 'filter_from', 'filter_cc', 'filter_subject', 'filter_thread', 'filter_new_important', 'filter_file_name', 'filter_file_revisions', 'sync_period', 'callback_url', 'failure_notif_url','filter_folder_added','filter_folder_removed','include_body','body_type'), array('callback_url','failure_notif_url'));
+		$params = $this->_filterParams($params, array('filter_to', 'filter_from', 'filter_cc', 'filter_subject', 'filter_thread', 'filter_new_important', 'filter_file_name', 'filter_file_revisions', 'sync_period', 'callback_url', 'failure_notif_url','filter_folder_added','filter_folder_removed','filter_from_domain','include_body','body_type'), array('callback_url','failure_notif_url'));
 		if ($params === false) {
 			throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 		}
@@ -1778,6 +1778,3 @@ class ContextIO {
 	}
 
 }
-
-
-?>
