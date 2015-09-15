@@ -342,7 +342,7 @@ class ContextIO {
 			$params = array('file_id' =>$params);
 		}
 		else {
-			$params = $this->_filterParams($params, array('file_id'), array('file_id'));
+			$params = $this->_filterParams($params, array('file_id', 'as_link'), array('file_id'));
 			if ($params === false) {
 				throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
 			}
@@ -354,6 +354,9 @@ class ContextIO {
 			$accessToken = new ContextIOExtLib\OAuthToken($this->accessToken, $this->accessTokenSecret);
 		}
 		$baseUrl = $this->build_url('accounts/' . $account . '/files/' . $params['file_id'] . '/content');
+		if(array_key_exists('as_link', $params)){
+			$baseUrl .= '?as_link=1';
+		}
 		$req = ContextIOExtLib\OAuthRequest::from_consumer_and_token($consumer, $accessToken, "GET", $baseUrl);
 		$sig_method = new ContextIOExtLib\OAuthSignatureMethod_HMAC_SHA1();
 		$req->sign_request($sig_method, $consumer, $accessToken);
