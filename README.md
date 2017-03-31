@@ -47,7 +47,7 @@ print_r($r->getData());
 // many calls are based for a User - you can define a USER_ID to make these calls
 // the USER_ID is returned in either the listUsers call or the getUser call
 // you can also get this from the interactive console
-define('ACCOUNT_ID', 'A CONTEXTIO ACCOUNT ID');
+define('USER_ID', 'A CONTEXTIO ACCOUNT ID');
 
 // You also need to know the EMAIL_ACCOUNT_LABEL and FOLDER to list messages.
 $r = $contextio->listSources(USER_ID);
