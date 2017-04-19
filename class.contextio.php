@@ -1555,6 +1555,18 @@ class ContextIO {
 	}
     
     /**
+     * Gets application-level webhook list.
+     *
+     * @link https://context.io/docs/2.0/webhooks#get
+     *
+     * @return ContextIOResponse
+     */
+    public function listApplicationWebhook()
+    {
+        return $this->get(null, 'webhooks/');
+    }
+    
+    /**
      * Gets application-level webhook.
      *
      * @link https://context.io/docs/2.0/webhooks#id-get
