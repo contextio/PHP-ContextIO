@@ -62,7 +62,8 @@ print_r($r);
 // Now that you know the ACCOUNT_ID, LABEL, and FOLDER you can list messages
 define('FOLDER', 'A FOLDER NAME');
 $params = array('label'=>LABEL, 'folder'=>FOLDER);
-$r = $contextio->listMessages(ACCOUNT_ID, $params);
+$r = $contextio->listMessagesBySourceAndFolder(USER_ID, $params);
+
 print_r($r);
 
 // It's a good idea to do error handling on your api calls. You can get the last error response 
