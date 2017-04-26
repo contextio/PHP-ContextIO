@@ -62,7 +62,7 @@ print_r($r);
 // Now that you know the ACCOUNT_ID, LABEL, and FOLDER you can list messages
 define('FOLDER', 'A FOLDER NAME');
 $params = array('label'=>LABEL, 'folder'=>FOLDER);
-$r = $contextio->listMessagesBySourceAndFolder(USER_ID, $params);
+$r = $contextio->listMessagesBySourceAndFolder(ACCOUNT_ID, $params);
 
 print_r($r);
 
