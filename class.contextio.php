@@ -1473,7 +1473,7 @@ class ContextIO {
 		}
 		return $this->get($account, 'webhooks/' . $params['webhook_id']);
 	}
-
+ 
 	public function addWebhook($account, $params) {
 		if (is_null($account) || ! is_string($account) || (! strpos($account, '@') === false)) {
 			throw new InvalidArgumentException('account must be string representing accountId');
@@ -1553,7 +1553,148 @@ class ContextIO {
 	public function useAuthorizationHeaders($authHeadersOn = true) {
 		$this->authHeaders = (is_bool($authHeadersOn)) ? $authHeadersOn : true;
 	}
-
+    
+    /**
+     * Gets application-level webhook list.
+     *
+     * @link https://context.io/docs/2.0/webhooks#get
+     *
+     * @return ContextIOResponse
+     */
+    public function listApplicationWebhook()
+    {
+        return $this->get(null, 'webhooks/');
+    }
+    
+    /**
+     * Gets application-level webhook.
+     *
+     * @link https://context.io/docs/2.0/webhooks#id-get
+     *
+     * @param string|array $params
+     *
+     * @return ContextIOResponse
+     */
+    public function getApplicationWebhook($params)
+    {
+        if (is_string($params)) {
+            $params = array('webhook_id' => $params);
+        } else {
+            $params = $this->_filterParams($params, array('webhook_id'), array('webhook_id'));
+            if ($params === false) {
+                throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+            }
+        }
+        
+        return $this->get(null, 'webhooks/' . $params[ 'webhook_id' ]);
+    }
+    
+    /**
+     * Creates application-level webhook. If you want to create user-level webhook use $this->addWebook() instead.
+     *
+     * @link https://context.io/docs/2.0/webhooks#post
+     *
+     * @param array [string] $params Query params.
+     *
+     * @return ContextIOResponse
+     */
+    public function addApplicationWebhook(array $params)
+    {
+        $params = $this->_filterParams($params, array(
+            'filter_to',
+            'filter_from',
+            'filter_cc',
+            'filter_subject',
+            'filter_thread',
+            'filter_new_important',
+            'filter_file_name',
+            'filter_file_revisions',
+            'sync_period',
+            'callback_url',
+            'failure_notif_url',
+            'filter_folder_added',
+            'filter_folder_removed',
+            'filter_to_domain',
+            'filter_from_domain',
+            'filter_parsed_receipts',
+            'include_body',
+            'body_type',
+            'include_header',
+            'receive_all_changes',
+            'receive_historical',
+        ), array('callback_url'));
+        if ($params === false) {
+            throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+        }
+        
+        return $this->post(null, 'webhooks/', $params);
+    }
+    
+    /**
+     * Deletes application-level webhook.
+     *
+     * @link https://context.io/docs/2.0/webhooks#id-delete
+     *
+     * @param string|array $params
+     *
+     * @return ContextIOResponse
+     */
+    public function deleteApplicationWebhook($params)
+    {
+        if (is_string($params)) {
+            $params = array('webhook_id' => $params);
+        } else {
+            $params = $this->_filterParams($params, array('webhook_id'), array('webhook_id'));
+            if ($params === false) {
+                throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+            }
+        }
+        
+        return $this->delete(null, 'webhooks/' . $params[ 'webhook_id' ]);
+    }
+    
+    /**
+     * Modifies application-level webhook.
+     *
+     * @Link https://context.io/docs/2.0/webhooks#id-post
+     *
+     * @param string|array $params
+     *
+     * @return ContextIOResponse
+     */
+    public function modifyApplicationWebhook($params)
+    {
+        $params = $this->_filterParams($params, array(
+            'webhook_id',
+            'filter_to',
+            'filter_from',
+            'filter_cc',
+            'filter_subject',
+            'filter_thread',
+            'filter_new_important',
+            'filter_file_name',
+            'filter_file_revisions',
+            'sync_period',
+            'callback_url',
+            'failure_notif_url',
+            'filter_folder_added',
+            'filter_folder_removed',
+            'filter_to_domain',
+            'filter_from_domain',
+            'filter_parsed_receipts',
+            'include_body',
+            'body_type',
+            'include_header',
+            'receive_all_changes',
+            'receive_historical',
+        ), array('webhook_id'));
+        if ($params === false) {
+            throw new InvalidArgumentException("params array contains invalid parameters or misses required parameters");
+        }
+        
+        return $this->post(null, 'webhooks/' . $params[ 'webhook_id' ], $params);
+    }
+	
 	/**
 	 * Returns the ContextIOResponse object for the last API call.
 	 * @return ContextIOResponse
