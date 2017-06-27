@@ -14,14 +14,14 @@ use ContextIO\oAuth\OAuthUtil;
 class HMAC_SHA1 extends AbstractSignatureMethod
 {
     
-    public function get_name()
+    public function getName()
     {
         return 'HMAC-SHA1';
     }
     
-    public function build_signature($request, $consumer, $token)
+    public function buildSignature($request, $consumer, $token)
     {
-        $base_string = $request->get_signature_base_string();
+        $base_string = $request->getSignatureBaseString();
         $request->base_string = $base_string;
         
         $key_parts = array(
@@ -29,7 +29,7 @@ class HMAC_SHA1 extends AbstractSignatureMethod
             ($token) ? $token->secret : "",
         );
         
-        $key_parts = OAuthUtil::urlencode_rfc3986($key_parts);
+        $key_parts = OAuthUtil::urlencodeRfc3986($key_parts);
         $key = implode('&', $key_parts);
         
         return base64_encode(hash_hmac('sha1', $base_string, $key, true));

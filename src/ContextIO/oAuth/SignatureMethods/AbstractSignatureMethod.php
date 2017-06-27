@@ -15,7 +15,7 @@ abstract class AbstractSignatureMethod
      * Needs to return the name of the Signature Method (ie HMAC-SHA1)
      * @return string
      */
-    abstract public function get_name();
+    abstract public function getName();
     
     /**
      * Build up the signature
@@ -29,7 +29,7 @@ abstract class AbstractSignatureMethod
      *
      * @return string
      */
-    abstract public function build_signature($request, $consumer, $token);
+    abstract public function buildSignature($request, $consumer, $token);
     
     /**
      * Verifies that a given signature is correct
@@ -41,9 +41,9 @@ abstract class AbstractSignatureMethod
      *
      * @return bool
      */
-    public function check_signature($request, $consumer, $token, $signature)
+    public function checkSignature($request, $consumer, $token, $signature)
     {
-        $built = $this->build_signature($request, $consumer, $token);
+        $built = $this->buildSignature($request, $consumer, $token);
         
         return $built == $signature;
     }

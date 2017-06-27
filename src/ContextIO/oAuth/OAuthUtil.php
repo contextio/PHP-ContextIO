@@ -5,10 +5,10 @@ namespace ContextIO\oAuth;
 class OAuthUtil
 {
     
-    public static function urlencode_rfc3986($input)
+    public static function urlencodeRfc3986($input)
     {
         if (is_array($input)) {
-            return array_map(array('ContextIO\oAuth\OAuthUtil', 'urlencode_rfc3986'), $input);
+            return array_map(array('ContextIO\oAuth\OAuthUtil', 'urlencodeRfc3986'), $input);
         } else if (is_scalar($input)) {
             return str_replace(
                 '+',
@@ -29,7 +29,7 @@ class OAuthUtil
      *
      * @return string
      */
-    public static function urldecode_rfc3986($string)
+    public static function urldecodeRfc3986($string)
     {
         return urldecode($string);
     }
@@ -44,7 +44,7 @@ class OAuthUtil
      *
      * @return array
      */
-    public static function split_header($header, $only_allow_oauth_parameters = true)
+    public static function splitHeader($header, $only_allow_oauth_parameters = true)
     {
         $pattern = '/(([-_a-z]*)=("([^"]*)"|([^,]*)),?)/';
         $offset = 0;
@@ -54,7 +54,7 @@ class OAuthUtil
             $header_name = $matches[ 2 ][ 0 ];
             $header_content = (isset($matches[ 5 ])) ? $matches[ 5 ][ 0 ] : $matches[ 4 ][ 0 ];
             if (preg_match('/^oauth_/', $header_name) || !$only_allow_oauth_parameters) {
-                $params[ $header_name ] = OAuthUtil::urldecode_rfc3986($header_content);
+                $params[ $header_name ] = OAuthUtil::urldecodeRfc3986($header_content);
             }
             $offset = $match[ 1 ] + strlen($match[ 0 ]);
         }
@@ -71,7 +71,7 @@ class OAuthUtil
      *
      * @return array
      */
-    public static function get_headers()
+    public static function getHeaders()
     {
         if (function_exists('apache_request_headers')) {
             // we need this to get the actual Authorization: header
@@ -129,7 +129,7 @@ class OAuthUtil
      *
      * @return array
      */
-    public static function parse_parameters($input)
+    public static function parseParameters($input)
     {
         if (!isset($input) || !$input) {
             return array();
@@ -140,8 +140,8 @@ class OAuthUtil
         $parsed_parameters = array();
         foreach ($pairs as $pair) {
             $split = explode('=', $pair, 2);
-            $parameter = OAuthUtil::urldecode_rfc3986($split[ 0 ]);
-            $value = isset($split[ 1 ]) ? OAuthUtil::urldecode_rfc3986($split[ 1 ]) : '';
+            $parameter = OAuthUtil::urldecodeRfc3986($split[ 0 ]);
+            $value = isset($split[ 1 ]) ? OAuthUtil::urldecodeRfc3986($split[ 1 ]) : '';
             
             if (isset($parsed_parameters[ $parameter ])) {
                 // We have already recieved parameter(s) with this name, so add to the list
@@ -162,15 +162,15 @@ class OAuthUtil
         return $parsed_parameters;
     }
     
-    public static function build_http_query($params)
+    public static function buildHttpQuery($params)
     {
         if (!$params) {
             return '';
         }
         
         // Urlencode both keys and values
-        $keys = OAuthUtil::urlencode_rfc3986(array_keys($params));
-        $values = OAuthUtil::urlencode_rfc3986(array_values($params));
+        $keys = OAuthUtil::urlencodeRfc3986(array_keys($params));
+        $values = OAuthUtil::urlencodeRfc3986(array_values($params));
         $params = array_combine($keys, $values);
         
         // Parameters are sorted by name, using lexicographical byte value ordering.

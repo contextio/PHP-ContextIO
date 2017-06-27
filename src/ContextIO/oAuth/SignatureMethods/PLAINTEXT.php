@@ -12,7 +12,7 @@ use ContextIO\oAuth;
 class PLAINTEXT extends AbstractSignatureMethod
 {
     
-    public function get_name() {
+    public function getName() {
         return "PLAINTEXT";
     }
     
@@ -30,13 +30,13 @@ class PLAINTEXT extends AbstractSignatureMethod
      *
      * @return string
      */
-    public function build_signature($request, $consumer, $token) {
+    public function buildSignature($request, $consumer, $token) {
         $key_parts = array(
             $consumer->secret,
             ($token) ? $token->secret : ""
         );
         
-        $key_parts = oAuth\OAuthUtil::urlencode_rfc3986($key_parts);
+        $key_parts = oAuth\OAuthUtil::urlencodeRfc3986($key_parts);
         $key = implode('&', $key_parts);
         $request->base_string = $key;
         

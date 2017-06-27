@@ -55,12 +55,12 @@ class ContextIOResponse
         $this->rawRequestHeaders = (is_array($requestHeaders)) ? $requestHeaders : false;
         $this->hasError = false;
         $this->headers = array('request' => $requestHeaders, 'response' => null);
-        $this->_decodeResponse($acceptableContentTypes);
-        $this->_parseHeaders('response');
-        $this->_parseHeaders('request');
+        $this->decodeResponse($acceptableContentTypes);
+        $this->parseHeaders('response');
+        $this->parseHeaders('request');
     }
     
-    private function _parseHeaders($which = 'response')
+    private function parseHeaders($which = 'response')
     {
         $raw = ($which == 'response') ? $this->rawResponseHeaders : $this->rawRequestHeaders;
         
@@ -105,7 +105,7 @@ class ContextIOResponse
         }
     }
     
-    private function _decodeResponse($acceptableContentTypes)
+    private function decodeResponse($acceptableContentTypes)
     {
         if (!(($this->httpCode >= 200) && ($this->httpCode < 400))) {
             $this->hasError = true;

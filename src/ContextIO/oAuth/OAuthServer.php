@@ -22,9 +22,9 @@ class OAuthServer
     /**
      * @param AbstractSignatureMethod $signature_method
      */
-    public function add_signature_method($signature_method)
+    public function addSignatureMethod($signature_method)
     {
-        $this->signature_methods[ $signature_method->get_name() ] = $signature_method;
+        $this->signature_methods[ $signature_method->getName() ] = $signature_method;
     }
     
     /**
@@ -34,20 +34,20 @@ class OAuthServer
      *
      * @return mixed Returns the request token on success.
      */
-    public function fetch_request_token(&$request)
+    public function fetchRequestToken(&$request)
     {
-        $this->get_version($request);
+        $this->getVersion($request);
         
-        $consumer = $this->get_consumer($request);
+        $consumer = $this->getConsumer($request);
         
         // no token required for the initial token request
         $token = null;
         
-        $this->check_signature($request, $consumer, $token);
+        $this->checkSignature($request, $consumer, $token);
         
         // Rev A change
-        $callback = $request->get_parameter('oauth_callback');
-        $new_token = $this->data_store->new_request_token($consumer, $callback);
+        $callback = $request->getParameter('oauth_callback');
+        $new_token = $this->data_store->newRequestToken($consumer, $callback);
         
         return $new_token;
     }
@@ -62,20 +62,20 @@ class OAuthServer
      *
      * @return mixed The access token on success
      */
-    public function fetch_access_token(&$request)
+    public function fetchAccessToken(&$request)
     {
-        $this->get_version($request);
+        $this->getVersion($request);
         
-        $consumer = $this->get_consumer($request);
+        $consumer = $this->getConsumer($request);
         
         // requires authorized request token
-        $token = $this->get_token($request, $consumer, "request");
+        $token = $this->getToken($request, $consumer, "request");
         
-        $this->check_signature($request, $consumer, $token);
+        $this->checkSignature($request, $consumer, $token);
         
         // Rev A change
-        $verifier = $request->get_parameter('oauth_verifier');
-        $new_token = $this->data_store->new_access_token($token, $consumer, $verifier);
+        $verifier = $request->getParameter('oauth_verifier');
+        $new_token = $this->data_store->newAccessToken($token, $consumer, $verifier);
         
         return $new_token;
     }
@@ -87,12 +87,12 @@ class OAuthServer
      *
      * @return array
      */
-    public function verify_request(&$request)
+    public function verifyRequest(&$request)
     {
-        $this->get_version($request);
-        $consumer = $this->get_consumer($request);
-        $token = $this->get_token($request, $consumer, "access");
-        $this->check_signature($request, $consumer, $token);
+        $this->getVersion($request);
+        $consumer = $this->getConsumer($request);
+        $token = $this->getToken($request, $consumer, "access");
+        $this->checkSignature($request, $consumer, $token);
         
         return array($consumer, $token);
     }
@@ -105,9 +105,9 @@ class OAuthServer
      *
      * @return mixed
      */
-    protected function get_version(&$request)
+    protected function getVersion(&$request)
     {
-        $version = $request->get_parameter("oauth_version");
+        $version = $request->getParameter("oauth_version");
         if (!$version) {
             // Service Providers MUST assume the protocol version to be 1.0 if this parameter is not present.
             // Chapter 7.0 ("Accessing Protected Ressources")
@@ -128,10 +128,10 @@ class OAuthServer
      * @return mixed
      * @throws OAuthException
      */
-    protected function get_signature_method(&$request)
+    protected function getSignatureMethod(&$request)
     {
         $signature_method =
-            @$request->get_parameter("oauth_signature_method");
+            @$request->getParameter("oauth_signature_method");
         
         if (!$signature_method) {
             // According to chapter 7 ("Accessing Protected Ressources") the signature-method
@@ -161,14 +161,14 @@ class OAuthServer
      *
      * @return mixed
      */
-    protected function get_consumer(&$request)
+    protected function getConsumer(&$request)
     {
-        $consumer_key = @$request->get_parameter("oauth_consumer_key");
+        $consumer_key = @$request->getParameter("oauth_consumer_key");
         if (!$consumer_key) {
             throw new OAuthException("Invalid consumer key");
         }
         
-        $consumer = $this->data_store->lookup_consumer($consumer_key);
+        $consumer = $this->data_store->lookupConsumer($consumer_key);
         if (!$consumer) {
             throw new OAuthException("Invalid consumer");
         }
@@ -187,10 +187,10 @@ class OAuthServer
      *
      * @return mixed
      */
-    protected function get_token(&$request, $consumer, $token_type = "access")
+    protected function getToken(&$request, $consumer, $token_type = "access")
     {
-        $token_field = @$request->get_parameter('oauth_token');
-        $token = $this->data_store->lookup_token(
+        $token_field = @$request->getParameter('oauth_token');
+        $token = $this->data_store->lookupToken(
             $consumer, $token_type, $token_field
         );
         if (!$token) {
@@ -210,18 +210,18 @@ class OAuthServer
      *
      * @throws OAuthException
      */
-    protected function check_signature(&$request, $consumer, $token)
+    protected function checkSignature(&$request, $consumer, $token)
     {
         // this should probably be in a different method
-        $timestamp = @$request->get_parameter('oauth_timestamp');
-        $nonce = @$request->get_parameter('oauth_nonce');
+        $timestamp = @$request->getParameter('oauth_timestamp');
+        $nonce = @$request->getParameter('oauth_nonce');
         
-        $this->check_timestamp($timestamp);
-        $this->check_nonce($consumer, $token, $nonce, $timestamp);
+        $this->checkTimestamp($timestamp);
+        $this->checkNonce($consumer, $token, $nonce, $timestamp);
         
-        $signature_method = $this->get_signature_method($request);
+        $signature_method = $this->getSignatureMethod($request);
         
-        $signature = $request->get_parameter('oauth_signature');
+        $signature = $request->getParameter('oauth_signature');
         $valid_sig = $signature_method->check_signature(
             $request,
             $consumer,
@@ -241,7 +241,7 @@ class OAuthServer
      *
      * @throws OAuthException
      */
-    protected function check_timestamp($timestamp)
+    protected function checkTimestamp($timestamp)
     {
         if (!$timestamp) {
             throw new OAuthException(
@@ -261,7 +261,7 @@ class OAuthServer
     /**
      * check that the nonce is not repeated
      */
-    protected function check_nonce($consumer, $token, $nonce, $timestamp)
+    protected function checkNonce($consumer, $token, $nonce, $timestamp)
     {
         if (!$nonce) {
             throw new OAuthException(
@@ -270,7 +270,7 @@ class OAuthServer
         }
         
         // verify that the nonce is uniqueish
-        $found = $this->data_store->lookup_nonce(
+        $found = $this->data_store->lookupNonce(
             $consumer,
             $token,
             $nonce,
