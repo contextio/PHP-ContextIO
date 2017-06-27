@@ -28,6 +28,7 @@ THE SOFTWARE.
  */
 
 require_once dirname(__FILE__) . '/class.contextioresponse.php';
+require_once dirname(__FILE__) . '/class.contextiocurlerrorexception.php';
 require_once dirname(__FILE__) . '/OAuth.php';
 
 /**
@@ -47,6 +48,7 @@ class ContextIO {
 	protected $apiVersion;
 	protected $lastResponse;
 	protected $authHeaders;
+	protected $requestTimeout;
 
 	/**
 	 * Instantiate a new ContextIO object. Your OAuth consumer key and secret can be
@@ -65,6 +67,11 @@ class ContextIO {
 		$this->apiVersion = '2.0';
 		$this->lastResponse = null;
 		$this->authHeaders = true;
+		$this->requestTimeout = null;
+	}
+
+	public function setRequestTimeout($requestTimeout) {
+		$this->requestTimeout = $requestTimeout;
 	}
 
 	/**
@@ -1861,6 +1868,9 @@ class ContextIO {
 			curl_setopt($curl, CURLOPT_HTTPHEADER, $httpHeadersToSet);
 		}
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		if ($this->requestTimeout !== null) {
+			curl_setopt($curl, CURLOPT_TIMEOUT, $this->requestTimeout);
+		}
 
 		if ($this->saveHeaders) {
 			$this->responseHeaders = array();
@@ -1869,6 +1879,11 @@ class ContextIO {
 			curl_setopt($curl, CURLINFO_HEADER_OUT, 1);
 		}
 		$result = curl_exec($curl);
+
+		$errno = curl_errno($curl);
+		if (!empty($errno)) {
+			throw new ContextIoCurlErrorException($curl);
+		}
 
 		$httpHeadersIn = ($this->saveHeaders) ? $this->responseHeaders : null;
 		$httpHeadersOut = ($this->saveHeaders) ? preg_split('/(\\n|\\r){1,2}/', curl_getinfo($curl, CURLINFO_HEADER_OUT)) : null;
