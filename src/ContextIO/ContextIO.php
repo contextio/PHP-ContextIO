@@ -50,6 +50,7 @@ class ContextIO
     protected $apiVersion = '2.0';
     protected $lastResponse = null;
     protected $authHeaders = true;
+    protected $requestTimeout;
     
     /**
      * Instantiate a new ContextIO object. Your OAuth consumer key and secret can be
@@ -60,7 +61,7 @@ class ContextIO
      * @param null|string $access_token Acces token
      * @param string|null $access_token_secret
      */
-    function __construct($key, $secret, $access_token = null, $access_token_secret = null)
+    public function __construct($key, $secret, $access_token = null, $access_token_secret = null)
     {
         $this->oauthKey = $key;
         $this->oauthSecret = $secret;
@@ -1167,8 +1168,8 @@ class ContextIO
      * of the sender.
      * @link http://context.io/docs/2.0/accounts/messages/body
      *
-     * @param string $account  accountId of the mailbox you want to query
-     * @param array $params Query  parameters for the  API  call: 'emailMessageId', 'from', 'dateSent','type
+     * @param string $account accountId of the mailbox you want to query
+     * @param array $params   Query  parameters for the  API  call: 'emailMessageId', 'from', 'dateSent','type
      *
      * @return \ContextIO\ContextIOResponse
      */
@@ -2146,6 +2147,16 @@ class ContextIO
     }
     
     /**
+     * After how long the unused connection should be closed.
+     *
+     * @param $requestTimeout
+     */
+    public function setRequestTimeout($requestTimeout)
+    {
+        $this->requestTimeout = $requestTimeout;
+    }
+    
+    /**
      * Sends a GET HTTP request.
      *
      * @param string $account
@@ -2230,6 +2241,8 @@ class ContextIO
      * @param array $httpHeadersToSet
      *
      * @return bool|\ContextIO\ContextIOResponse
+     *
+     * @throws cURLException
      */
     protected function sendRequest(
         $httpMethod,
@@ -2345,6 +2358,10 @@ class ContextIO
         }
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         
+        if ($this->requestTimeout !== null) {
+            curl_setopt($curl, CURLOPT_TIMEOUT, $this->requestTimeout);
+        }
+        
         if ($this->saveHeaders) {
             $this->responseHeaders = array();
             $this->requestHeaders = array();
@@ -2352,6 +2369,11 @@ class ContextIO
             curl_setopt($curl, CURLINFO_HEADER_OUT, 1);
         }
         $result = curl_exec($curl);
+        
+        $errno = curl_errno($curl);
+        if (!empty($errno)) {
+            throw new cURLException($curl);
+        }
         
         if ($this->saveHeaders) {
             $httpHeadersIn = $this->responseHeaders;
