@@ -25,24 +25,24 @@ You can install the library by adding it as a dependency to your composer.json.
 ## Examples
 
 ```php
-// include the lib
-include_once("class.contextio.php");
+// include Composer's autoloader
+include_once("vendor/autoload.php");
 
 // define your API key and secret - find this https://console.context.io/#settings
 define('CONSUMER_KEY', 'YOUR API CONSUMER KEY');
 define('CONSUMER_SECRET', 'YOUR API CONSUMER SECRET');
 
-// instantiate the contextio object
-$contextio = new ContextIO(CONSUMER_KEY, CONSUMER_SECRET);
-
-// get a list of users and print the response data out
-$r = $contextio->listAccounts();
-print_r($r->getData());
-
 // many calls are based for a User - you can define a USER_ID to make these calls
 // the USER_ID is returned in either the listUsers call or the getUser call
 // you can also get this from the interactive console
 define('ACCOUNT_ID', 'A CONTEXTIO ACCOUNT ID');
+
+// instantiate the contextio object
+$contextio = new ContextIO\ContextIO(CONSUMER_KEY, CONSUMER_SECRET);
+
+// get a list of users and print the response data out
+$r = $contextio->listAccounts();
+print_r($r->getData());
 
 // You also need to know the EMAIL_ACCOUNT_LABEL and FOLDER to list messages.
 $r = $contextio->listSources(USER_ID);
@@ -50,13 +50,13 @@ print_r($r->getData());
 
 // You can see all the folders in an email account using the listEmailAccountFolders method
 define('LABEL', 'A SOURCE LABEL');
-$params = array('label'=>LABEL);
+$params = array('label' => LABEL);
 $r = $contextio->listSourceFolders(USER_ID, $params);
 print_r($r);
 
 // Now that you know the USER_ID, LABEL, and FOLDER you can list messages
 define('FOLDER', 'A FOLDER NAME');
-$params = array('label'=>LABEL, 'folder'=>FOLDER);
+$params = array('label' => LABEL, 'folder' => FOLDER);
 $r = $contextio->listMessages(USER_ID, $params);
 print_r($r);
 
@@ -77,4 +77,4 @@ while($x < 10) { //retry the call up to 10 times if it fails
 
 ```
 
-Refer to the class.contextio.php file to see a list of all the methods.
+All methods are listed in src/ContextIO/ContextIO.php
