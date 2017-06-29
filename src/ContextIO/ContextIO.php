@@ -33,40 +33,33 @@ THE SOFTWARE.
 
 namespace ContextIO;
 
-use ContextIO\oAuth;
-
 class ContextIO
 {
     
-    protected $responseHeaders;
-    protected $requestHeaders;
-    protected $oauthKey;
-    protected $oauthSecret;
-    protected $accessToken;
-    protected $accessTokenSecret;
-    protected $saveHeaders = false;
-    protected $ssl = true;
-    protected $endPoint = 'api.context.io';
-    protected $apiVersion = '2.0';
-    protected $lastResponse = null;
-    protected $authHeaders = true;
-    protected $requestTimeout;
+    /** @var RequestInterface */
+    protected $requestClass;
     
     /**
      * Instantiate a new ContextIO object. Your OAuth consumer key and secret can be
      * found under the "settings" tab of the developer console (https://console.context.io/#settings)
      *
-     * @param string $key               Your Context.IO OAuth consumer key
-     * @param string $secret            Your Context.IO OAuth consumer secret
-     * @param null|string $access_token Acces token
+     * @param string $key                    Your Context.IO OAuth consumer key
+     * @param string $secret                 Your Context.IO OAuth consumer secret
+     * @param null|string $access_token      Acces token
      * @param string|null $access_token_secret
+     * @param RequestInterface $requestClass Request class you want to use. Default to ContextIORequest
      */
-    public function __construct($key, $secret, $access_token = null, $access_token_secret = null)
-    {
-        $this->oauthKey = $key;
-        $this->oauthSecret = $secret;
-        $this->accessToken = $access_token;
-        $this->accessTokenSecret = $access_token_secret;
+    public function __construct(
+        $key,
+        $secret,
+        $access_token = null,
+        $access_token_secret = null,
+        RequestInterface $requestClass = null
+    ) {
+        if (!$requestClass) {
+            $requestClass = new ContextIORequest($key, $secret, $access_token, $access_token_secret);
+        }
+        $this->requestClass = $requestClass;
     }
     
     /**
@@ -89,7 +82,7 @@ class ContextIO
             }
         }
         
-        return $this->get(null, 'discovery?source_type=imap&email=' . rawurlencode($params[ 'email' ]));
+        return $this->requestClass->get(null, 'discovery?source_type=imap&email=' . rawurlencode($params[ 'email' ]));
     }
     
     /**
@@ -101,7 +94,7 @@ class ContextIO
      */
     public function listConnectTokens($account = null)
     {
-        return $this->get($account, 'connect_tokens');
+        return $this->requestClass->get($account, 'connect_tokens');
     }
     
     /**
@@ -123,7 +116,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'connect_tokens/' . $params[ 'token' ]);
+        return $this->requestClass->get($account, 'connect_tokens/' . $params[ 'token' ]);
     }
     
     /**xt.io/docs/2.0/connecttokens
@@ -151,8 +144,13 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post($account, 'connect_tokens', $params, null,
-            array('Content-Type: application/x-www-form-urlencoded'));
+        return $this->requestClass->post(
+            $account,
+            'connect_tokens',
+            $params,
+            null,
+            array('Content-Type: application/x-www-form-urlencoded')
+        );
     }
     
     /**
@@ -174,7 +172,7 @@ class ContextIO
             }
         }
         
-        return $this->delete($account, 'connect_tokens/' . $params[ 'token' ]);
+        return $this->requestClass->delete($account, 'connect_tokens/' . $params[ 'token' ]);
     }
     
     /**
@@ -184,7 +182,7 @@ class ContextIO
      */
     public function listOAuthProviders()
     {
-        return $this->get(null, 'oauth_providers');
+        return $this->requestClass->get(null, 'oauth_providers');
     }
     
     /**
@@ -205,7 +203,7 @@ class ContextIO
             }
         }
         
-        return $this->get(null, 'oauth_providers/' . $params[ 'provider_consumer_key' ]);
+        return $this->requestClass->get(null, 'oauth_providers/' . $params[ 'provider_consumer_key' ]);
     }
     
     /**
@@ -223,7 +221,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post(null, 'oauth_providers', $params);
+        return $this->requestClass->post(null, 'oauth_providers', $params);
     }
     
     /**
@@ -244,7 +242,7 @@ class ContextIO
             }
         }
         
-        return $this->delete(null, 'oauth_providers/' . $params[ 'provider_consumer_key' ]);
+        return $this->requestClass->delete(null, 'oauth_providers/' . $params[ 'provider_consumer_key' ]);
     }
     
     /**
@@ -269,7 +267,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'contacts', $params);
+        return $this->requestClass->get($account, 'contacts', $params);
     }
     
     public function getContact($account, $params = array())
@@ -286,7 +284,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'contacts/' . $params[ 'email' ]);
+        return $this->requestClass->get($account, 'contacts/' . $params[ 'email' ]);
     }
     
     /**
@@ -308,7 +306,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->get($account, 'contacts/' . $params[ 'email' ] . '/files', $params);
+        return $this->requestClass->get($account, 'contacts/' . $params[ 'email' ] . '/files', $params);
     }
     
     /**
@@ -330,7 +328,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->get($account, 'contacts/' . $params[ 'email' ] . '/messages', $params);
+        return $this->requestClass->get($account, 'contacts/' . $params[ 'email' ] . '/messages', $params);
     }
     
     /**
@@ -352,7 +350,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->get($account, 'contacts/' . $params[ 'email' ] . '/threads', $params);
+        return $this->requestClass->get($account, 'contacts/' . $params[ 'email' ] . '/threads', $params);
     }
     
     /**
@@ -391,7 +389,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'files', $params);
+        return $this->requestClass->get($account, 'files', $params);
     }
     
     public function getFile($account, $params)
@@ -408,7 +406,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'files/' . $params[ 'file_id' ]);
+        return $this->requestClass->get($account, 'files/' . $params[ 'file_id' ]);
     }
     
     public function getFileURL($account, $params)
@@ -422,7 +420,7 @@ class ContextIO
             $params = $this->checkFilterParams($params, array('file_id'), array('file_id'));
         }
         
-        return $this->get($account, 'files/' . $params[ 'file_id' ] . '/content', array('as_link' => 1),
+        return $this->requestClass->get($account, 'files/' . $params[ 'file_id' ] . '/content', array('as_link' => 1),
             array('text/uri-list'));
     }
     
@@ -435,11 +433,10 @@ class ContextIO
      *
      * @param string $account accountId of the mailbox you want to query
      * @param array           [string]string $params Query parameters for the API call: 'fileId'
-     * @param string $saveAs  Path to local file where the attachment should be saved to.
      *
      * @return mixed
      */
-    public function getFileContent($account, $params, $saveAs = null)
+    public function getFileContent($account, $params)
     {
         if (is_null($account) || !is_string($account) || (!strpos($account, '@') === false)) {
             throw new \InvalidArgumentException('account must be string representing accountId');
@@ -453,61 +450,7 @@ class ContextIO
             }
         }
         
-        $consumer = new oAuth\OAuthConsumer($this->oauthKey, $this->oauthSecret);
-        $accessToken = null;
-        if (!is_null($this->accessToken) && !is_null($this->accessTokenSecret)) {
-            $accessToken = new oAuth\OAuthToken($this->accessToken, $this->accessTokenSecret);
-        }
-        $baseUrl = $this->buildUrl('accounts/' . $account . '/files/' . $params[ 'file_id' ] . '/content');
-        if (array_key_exists('as_link', $params)) {
-            $baseUrl .= '?as_link=1';
-        }
-        
-        $req = oAuth\OAuthRequest::fromConsumerAndToken($consumer, $accessToken, "GET", $baseUrl);
-        $sig_method = new oAuth\SignatureMethods\HMAC_SHA1();
-        $req->signRequest($sig_method, $consumer, $accessToken);
-        
-        //get data using signed url
-        if ($this->authHeaders) {
-            $curl = curl_init($baseUrl);
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array($req->toHeader()));
-        } else {
-            $curl = curl_init($req->toUrl());
-        }
-        
-        if ($this->ssl) {
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        }
-        
-        curl_setopt($curl, CURLOPT_USERAGENT, 'ContextIOLibrary/2.0 (PHP)');
-        
-        if (!is_null($saveAs)) {
-            $fp = fopen($saveAs, "w");
-            curl_setopt($curl, CURLOPT_FILE, $fp);
-            curl_setopt($curl, CURLOPT_HEADER, 0);
-            curl_exec($curl);
-            curl_close($curl);
-            fclose($fp);
-            
-            return true;
-        }
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        $result = curl_exec($curl);
-        if (curl_getinfo($curl, CURLINFO_HTTP_CODE) != 200) {
-            $response = new ContextIOResponse(
-                curl_getinfo($curl, CURLINFO_HTTP_CODE),
-                null,
-                null,
-                curl_getinfo($curl, CURLINFO_CONTENT_TYPE),
-                $result);
-            $this->lastResponse = $response;
-            curl_close($curl);
-            
-            return false;
-        }
-        curl_close($curl);
-        
-        return $result;
+        return $this->requestClass->get($account, 'files/' . $params[ 'file_id' ] . '/content');
     }
     
     /**
@@ -539,7 +482,7 @@ class ContextIO
             $newParams[ 'generate' ] = $params[ 'generate' ];
         }
         
-        return $this->get($account, 'files/' . $params[ 'file_id1' ] . '/changes', $newParams);
+        return $this->requestClass->get($account, 'files/' . $params[ 'file_id1' ] . '/changes', $newParams);
     }
     
     /**
@@ -566,7 +509,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'files/' . $params[ 'file_id' ] . '/revisions', $params);
+        return $this->requestClass->get($account, 'files/' . $params[ 'file_id' ] . '/revisions', $params);
     }
     
     /**
@@ -594,7 +537,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'files/' . $params[ 'file_id' ] . '/related', $params);
+        return $this->requestClass->get($account, 'files/' . $params[ 'file_id' ] . '/related', $params);
     }
     
     /**
@@ -633,10 +576,10 @@ class ContextIO
         unset($params[ 'label' ]);
         unset($params[ 'folder' ]);
         if (array_key_exists('async_job_id', $params)) {
-            return $this->get($account, "sources/$source/folders/$folder/messages/" . $params[ 'async_job_id' ]);
+            return $this->requestClass->get($account, "sources/$source/folders/$folder/messages/" . $params[ 'async_job_id' ]);
         }
         
-        return $this->get($account, "sources/$source/folders/$folder/messages", $params);
+        return $this->requestClass->get($account, "sources/$source/folders/$folder/messages", $params);
     }
     
     /**
@@ -689,7 +632,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'messages', $params);
+        return $this->requestClass->get($account, 'messages', $params);
     }
     
     public function addMessageToFolder($account, $params = array())
@@ -736,17 +679,17 @@ class ContextIO
             $src_file = '@' . $params[ 'src_file' ];
             unset($params[ 'src_file' ]);
             
-            return $this->post($account, 'messages', $params, array('field' => 'message', 'filename' => $src_file));
+            return $this->requestClass->post($account, 'messages', $params, array('field' => 'message', 'filename' => $src_file));
         } elseif (array_key_exists('message_id', $params)) {
-            return $this->post($account, 'messages/' . $params[ 'message_id' ], $params);
+            return $this->requestClass->post($account, 'messages/' . $params[ 'message_id' ], $params);
         } elseif (array_key_exists('email_message_id', $params)) {
-            return $this->post($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]), $params);
+            return $this->requestClass->post($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]), $params);
         } elseif (array_key_exists('gmail_message_id', $params)) {
             if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                return $this->post($account, 'messages/' . $params[ 'gmail_message_id' ], $params);
+                return $this->requestClass->post($account, 'messages/' . $params[ 'gmail_message_id' ], $params);
             }
             
-            return $this->post($account, 'messages/gm-' . $params[ 'gmail_message_id' ], $params);
+            return $this->requestClass->post($account, 'messages/gm-' . $params[ 'gmail_message_id' ], $params);
         } else {
             throw new \InvalidArgumentException('src_file, message_id, email_message_id or gmail_message_id is a required hash key');
         }
@@ -768,7 +711,7 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         if (is_string($params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params));
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params));
         } else {
             $params = $this->checkFilterParams($params, array(
                 'message_id',
@@ -787,15 +730,15 @@ class ContextIO
                 throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
             }
             if (array_key_exists('message_id', $params)) {
-                return $this->get($account, 'messages/' . $params[ 'message_id' ], $params);
+                return $this->requestClass->get($account, 'messages/' . $params[ 'message_id' ], $params);
             } elseif (array_key_exists('email_message_id', $params)) {
-                return $this->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]), $params);
+                return $this->requestClass->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]), $params);
             } elseif (array_key_exists('gmail_message_id', $params)) {
                 if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                    return $this->get($account, 'messages/' . $params[ 'gmail_message_id' ], $params);
+                    return $this->requestClass->get($account, 'messages/' . $params[ 'gmail_message_id' ], $params);
                 }
                 
-                return $this->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ], $params);
+                return $this->requestClass->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ], $params);
             } else {
                 throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
             }
@@ -808,22 +751,22 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         if (is_string($params)) {
-            return $this->delete($account, 'messages/' . rawurlencode($params));
+            return $this->requestClass->delete($account, 'messages/' . rawurlencode($params));
         } else {
             $params = $this->checkFilterParams($params, array('message_id', 'email_message_id', 'gmail_message_id'));
             if ($params === false) {
                 throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
             }
             if (array_key_exists('message_id', $params)) {
-                return $this->delete($account, 'messages/' . $params[ 'message_id' ]);
+                return $this->requestClass->delete($account, 'messages/' . $params[ 'message_id' ]);
             } elseif (array_key_exists('email_message_id', $params)) {
-                return $this->delete($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]));
+                return $this->requestClass->delete($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]));
             } elseif (array_key_exists('gmail_message_id', $params)) {
                 if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                    return $this->delete($account, 'messages/' . $params[ 'gmail_message_id' ]);
+                    return $this->requestClass->delete($account, 'messages/' . $params[ 'gmail_message_id' ]);
                 }
                 
-                return $this->delete($account, 'messages/gm-' . $params[ 'gmail_message_id' ]);
+                return $this->requestClass->delete($account, 'messages/gm-' . $params[ 'gmail_message_id' ]);
             } else {
                 throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
             }
@@ -846,7 +789,7 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         if (is_string($params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params) . '/headers');
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params) . '/headers');
         } else {
             $params = $this->checkFilterParams($params,
                 array('message_id', 'email_message_id', 'gmail_message_id', 'raw'),
@@ -856,17 +799,17 @@ class ContextIO
                 $additionalParams = array('raw' => $params[ 'raw' ]);
             }
             if (array_key_exists('message_id', $params)) {
-                return $this->get($account, 'messages/' . $params[ 'message_id' ] . '/headers', $additionalParams);
+                return $this->requestClass->get($account, 'messages/' . $params[ 'message_id' ] . '/headers', $additionalParams);
             } elseif (array_key_exists('email_message_id', $params)) {
-                return $this->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/headers',
+                return $this->requestClass->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/headers',
                     $additionalParams);
             } elseif (array_key_exists('gmail_message_id', $params)) {
                 if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                    return $this->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/headers',
+                    return $this->requestClass->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/headers',
                         $additionalParams);
                 }
                 
-                return $this->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/headers',
+                return $this->requestClass->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/headers',
                     $additionalParams);
             } else {
                 throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
@@ -881,11 +824,10 @@ class ContextIO
      *
      * @param string $account     accountId of the mailbox you want to query
      * @param string[] $params    Query parameters for the API call: 'emailMessageId'
-     * @param null|string $saveAs Save response as.
      *
      * @return bool|\ContextIO\ContextIOResponse
      */
-    public function getMessageSource($account, $params, $saveAs = null)
+    public function getMessageSource($account, $params)
     {
         if (is_null($account) || !is_string($account) || (!strpos($account, '@') === false)) {
             throw new \InvalidArgumentException('account must be string representing accountId');
@@ -906,57 +848,7 @@ class ContextIO
             throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
         }
         
-        $consumer = new oAuth\OAuthConsumer($this->oauthKey, $this->oauthSecret);
-        $accessToken = null;
-        if (!is_null($this->accessToken) && !is_null($this->accessTokenSecret)) {
-            $accessToken = new oAuth\OAuthToken($this->accessToken, $this->accessTokenSecret);
-        }
-        $baseUrl = $this->buildUrl('accounts/' . $account . '/' . $url);
-        $req = oAuth\OAuthRequest::fromConsumerAndToken($consumer, $accessToken, "GET", $baseUrl);
-        $sig_method = new oAuth\SignatureMethods\HMAC_SHA1();
-        $req->signRequest($sig_method, $consumer, $accessToken);
-        
-        //get data using signed url
-        if ($this->authHeaders) {
-            $curl = curl_init($baseUrl);
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array($req->toHeader()));
-        } else {
-            $curl = curl_init($req->toUrl());
-        }
-        
-        if ($this->ssl) {
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        }
-        
-        curl_setopt($curl, CURLOPT_USERAGENT, 'ContextIOLibrary/2.0 (PHP)');
-        
-        if (!is_null($saveAs)) {
-            $fp = fopen($saveAs, "w");
-            curl_setopt($curl, CURLOPT_FILE, $fp);
-            curl_setopt($curl, CURLOPT_HEADER, 0);
-            curl_exec($curl);
-            curl_close($curl);
-            fclose($fp);
-            
-            return true;
-        }
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        $result = curl_exec($curl);
-        if (curl_getinfo($curl, CURLINFO_HTTP_CODE) != 200) {
-            $response = new ContextIOResponse(
-                curl_getinfo($curl, CURLINFO_HTTP_CODE),
-                null,
-                null,
-                curl_getinfo($curl, CURLINFO_CONTENT_TYPE),
-                $result);
-            $this->lastResponse = $response;
-            curl_close($curl);
-            
-            return false;
-        }
-        curl_close($curl);
-        
-        return $result;
+        return $this->requestClass->get($account, $url);
     }
     
     /**
@@ -975,17 +867,17 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         if (is_string($params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params) . '/flags');
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params) . '/flags');
         } elseif (array_key_exists('message_id', $params)) {
-            return $this->get($account, 'messages/' . $params[ 'message_id' ] . '/flags');
+            return $this->requestClass->get($account, 'messages/' . $params[ 'message_id' ] . '/flags');
         } elseif (array_key_exists('email_message_id', $params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/flags');
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/flags');
         } elseif (array_key_exists('gmail_message_id', $params)) {
             if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                return $this->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/flags');
+                return $this->requestClass->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/flags');
             }
             
-            return $this->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/flags');
+            return $this->requestClass->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/flags');
         } else {
             throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
         }
@@ -1007,17 +899,17 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         if (is_string($params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params) . '/folders');
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params) . '/folders');
         } elseif (array_key_exists('message_id', $params)) {
-            return $this->get($account, 'messages/' . $params[ 'message_id' ] . '/folders');
+            return $this->requestClass->get($account, 'messages/' . $params[ 'message_id' ] . '/folders');
         } elseif (array_key_exists('email_message_id', $params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/folders');
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/folders');
         } elseif (array_key_exists('gmail_message_id', $params)) {
             if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                return $this->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/folders');
+                return $this->requestClass->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/folders');
             }
             
-            return $this->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/folders');
+            return $this->requestClass->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/folders');
         } else {
             throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
         }
@@ -1048,18 +940,18 @@ class ContextIO
             }
             $folderStr = json_encode($params[ 'folders' ]);
             if (array_key_exists('email_message_id', $params)) {
-                return $this->put($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/folders',
+                return $this->requestClass->put($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/folders',
                     $folderStr, array('Content-Type: application/json'));
             } elseif (array_key_exists('message_id', $params)) {
-                return $this->put($account, 'messages/' . $params[ 'message_id' ] . '/folders', $folderStr,
+                return $this->requestClass->put($account, 'messages/' . $params[ 'message_id' ] . '/folders', $folderStr,
                     array('Content-Type: application/json'));
             } elseif (array_key_exists('gmail_message_id', $params)) {
                 if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                    return $this->put($account, 'messages/' . $params[ 'gmail_message_id' ] . '/folders', $folderStr,
+                    return $this->requestClass->put($account, 'messages/' . $params[ 'gmail_message_id' ] . '/folders', $folderStr,
                         array('Content-Type: application/json'));
                 }
                 
-                return $this->put($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/folders', $folderStr,
+                return $this->requestClass->put($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/folders', $folderStr,
                     array('Content-Type: application/json'));
             } else {
                 throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
@@ -1085,18 +977,18 @@ class ContextIO
             }
             
             if (array_key_exists('email_message_id', $params)) {
-                return $this->post($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/folders',
+                return $this->requestClass->post($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/folders',
                     $addRemoveParams, null, $httpHeadersToSet);
             } elseif (array_key_exists('message_id', $params)) {
-                return $this->post($account, 'messages/' . $params[ 'message_id' ] . '/folders', $addRemoveParams, null,
+                return $this->requestClass->post($account, 'messages/' . $params[ 'message_id' ] . '/folders', $addRemoveParams, null,
                     $httpHeadersToSet);
             } elseif (array_key_exists('gmail_message_id', $params)) {
                 if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                    return $this->post($account, 'messages/' . $params[ 'gmail_message_id' ] . '/folders',
+                    return $this->requestClass->post($account, 'messages/' . $params[ 'gmail_message_id' ] . '/folders',
                         $addRemoveParams, null, $httpHeadersToSet);
                 }
                 
-                return $this->post($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/folders',
+                return $this->requestClass->post($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/folders',
                     $addRemoveParams, null, $httpHeadersToSet);
             } else {
                 throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
@@ -1146,16 +1038,16 @@ class ContextIO
         }
         
         if (array_key_exists('email_message_id', $params)) {
-            return $this->post($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/flags',
+            return $this->requestClass->post($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/flags',
                 $flagParams);
         } elseif (array_key_exists('message_id', $params)) {
-            return $this->post($account, 'messages/' . $params[ 'message_id' ] . '/flags', $flagParams);
+            return $this->requestClass->post($account, 'messages/' . $params[ 'message_id' ] . '/flags', $flagParams);
         } elseif (array_key_exists('gmail_message_id', $params)) {
             if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                return $this->post($account, 'messages/' . $params[ 'gmail_message_id' ] . '/flags', $flagParams);
+                return $this->requestClass->post($account, 'messages/' . $params[ 'gmail_message_id' ] . '/flags', $flagParams);
             }
             
-            return $this->post($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/flags', $flagParams);
+            return $this->requestClass->post($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/flags', $flagParams);
         } else {
             throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
         }
@@ -1179,7 +1071,7 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         if (is_string($params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params) . '/body');
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params) . '/body');
         }
         $params = $this->checkFilterParams($params,
             array('message_id', 'email_message_id', 'gmail_message_id', 'type'));
@@ -1191,16 +1083,16 @@ class ContextIO
             $additionalParams = array('type' => $params[ 'type' ]);
         }
         if (array_key_exists('email_message_id', $params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/body',
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/body',
                 $additionalParams);
         } elseif (array_key_exists('message_id', $params)) {
-            return $this->get($account, 'messages/' . $params[ 'message_id' ] . '/body', $additionalParams);
+            return $this->requestClass->get($account, 'messages/' . $params[ 'message_id' ] . '/body', $additionalParams);
         } elseif (array_key_exists('gmail_message_id', $params)) {
             if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                return $this->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/body', $additionalParams);
+                return $this->requestClass->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/body', $additionalParams);
             }
             
-            return $this->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/body', $additionalParams);
+            return $this->requestClass->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/body', $additionalParams);
         } else {
             throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
         }
@@ -1221,7 +1113,7 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         if (is_string($params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params) . '/thread');
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params) . '/thread');
         }
         $params = $this->checkFilterParams($params, array(
             'message_id',
@@ -1237,15 +1129,15 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         if (array_key_exists('email_message_id', $params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/thread', $params);
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/thread', $params);
         } elseif (array_key_exists('message_id', $params)) {
-            return $this->get($account, 'messages/' . $params[ 'message_id' ] . '/thread', $params);
+            return $this->requestClass->get($account, 'messages/' . $params[ 'message_id' ] . '/thread', $params);
         } elseif (array_key_exists('gmail_message_id', $params)) {
             if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                return $this->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/thread', $params);
+                return $this->requestClass->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/thread', $params);
             }
             
-            return $this->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/thread', $params);
+            return $this->requestClass->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/thread', $params);
         } else {
             throw new \InvalidArgumentException('message_id, email_message_id or gmail_message_id is a required hash key');
         }
@@ -1288,7 +1180,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'threads', $params);
+        return $this->requestClass->get($account, 'threads', $params);
     }
     
     /**
@@ -1322,21 +1214,21 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         if (array_key_exists('email_message_id', $params)) {
-            return $this->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/thread', $params);
+            return $this->requestClass->get($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]) . '/thread', $params);
         } elseif (array_key_exists('message_id', $params)) {
-            return $this->get($account, 'messages/' . $params[ 'message_id' ] . '/thread', $params);
+            return $this->requestClass->get($account, 'messages/' . $params[ 'message_id' ] . '/thread', $params);
         } elseif (array_key_exists('gmail_message_id', $params)) {
             if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
-                return $this->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/thread', $params);
+                return $this->requestClass->get($account, 'messages/' . $params[ 'gmail_message_id' ] . '/thread', $params);
             }
             
-            return $this->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/thread', $params);
+            return $this->requestClass->get($account, 'messages/gm-' . $params[ 'gmail_message_id' ] . '/thread', $params);
         } elseif (array_key_exists('gmail_thread_id', $params)) {
             if (substr($params[ 'gmail_thread_id' ], 0, 3) == 'gm-') {
-                return $this->get($account, 'threads/' . $params[ 'gmail_thread_id' ], $params);
+                return $this->requestClass->get($account, 'threads/' . $params[ 'gmail_thread_id' ], $params);
             }
             
-            return $this->get($account, 'threads/gm-' . $params[ 'gmail_thread_id' ], $params);
+            return $this->requestClass->get($account, 'threads/gm-' . $params[ 'gmail_thread_id' ], $params);
         } else {
             throw new \InvalidArgumentException('gmail_thread_id, messageId, email_message_id or gmail_message_id are required hash keys');
         }
@@ -1361,10 +1253,10 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         if (substr($params[ 'gmail_thread_id' ], 0, 3) == 'gm-') {
-            return $this->delete($account, 'threads/' . $params[ 'gmail_thread_id' ]);
+            return $this->requestClass->delete($account, 'threads/' . $params[ 'gmail_thread_id' ]);
         }
         
-        return $this->delete($account, 'threads/gm-' . $params[ 'gmail_thread_id' ]);
+        return $this->requestClass->delete($account, 'threads/gm-' . $params[ 'gmail_thread_id' ]);
     }
     
     /**
@@ -1396,7 +1288,7 @@ class ContextIO
             }
             $folderStr = json_encode($params[ 'folders' ]);
             
-            return $this->put($account, 'threads/' . $gmailThreadId . '/folders', $folderStr,
+            return $this->requestClass->put($account, 'threads/' . $gmailThreadId . '/folders', $folderStr,
                 array('Content-Type: application/json'));
         } else {
             $addRemoveParams = array();
@@ -1418,7 +1310,7 @@ class ContextIO
                 $httpHeadersToSet[] = 'Content-Type: application/x-www-form-urlencoded';
             }
             
-            return $this->post($account, 'threads/' . $gmailThreadId . '/folders', $addRemoveParams, null,
+            return $this->requestClass->post($account, 'threads/' . $gmailThreadId . '/folders', $addRemoveParams, null,
                 $httpHeadersToSet);
         }
     }
@@ -1451,7 +1343,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post(null, 'accounts', $params);
+        return $this->requestClass->post(null, 'accounts', $params);
     }
     
     public function modifyAccount($account, $params)
@@ -1464,7 +1356,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post($account, '', $params);
+        return $this->requestClass->post($account, '', $params);
     }
     
     public function getAccount($account)
@@ -1473,7 +1365,7 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         
-        return $this->get($account);
+        return $this->requestClass->get($account);
     }
     
     public function deleteAccount($account)
@@ -1482,7 +1374,7 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         
-        return $this->delete($account);
+        return $this->requestClass->delete($account);
     }
     
     public function listAccountEmailAddresses($account)
@@ -1491,7 +1383,7 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         
-        return $this->get($account, 'email_addresses');
+        return $this->requestClass->get($account, 'email_addresses');
     }
     
     public function addEmailAddressToAccount($account, $params)
@@ -1504,7 +1396,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post($account, 'email_addresses', $params);
+        return $this->requestClass->post($account, 'email_addresses', $params);
     }
     
     public function deleteEmailAddressFromAccount($account, $params)
@@ -1513,14 +1405,14 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         if (is_string($params)) {
-            return $this->delete($account, 'email_addresses/' . $params);
+            return $this->requestClass->delete($account, 'email_addresses/' . $params);
         }
         $params = $this->checkFilterParams($params, array('email_address'), array('email_address'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->delete($account, 'email_addresses/' . $params[ 'email_address' ]);
+        return $this->requestClass->delete($account, 'email_addresses/' . $params[ 'email_address' ]);
     }
     
     public function setPrimaryEmailAddressForAccount($account, $params)
@@ -1529,14 +1421,14 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         if (is_string($params)) {
-            return $this->post($account, 'email_addresses/' . $params, array('primary' => 1));
+            return $this->requestClass->post($account, 'email_addresses/' . $params, array('primary' => 1));
         }
         $params = $this->checkFilterParams($params, array('email_address'), array('email_address'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post($account, 'email_addresses/' . $params[ 'email_address' ], array('primary' => 1));
+        return $this->requestClass->post($account, 'email_addresses/' . $params[ 'email_address' ], array('primary' => 1));
     }
     
     public function listAccounts($params = null)
@@ -1548,7 +1440,7 @@ class ContextIO
             }
         }
         
-        return $this->get(null, 'accounts', $params);
+        return $this->requestClass->get(null, 'accounts', $params);
     }
     
     /**
@@ -1582,7 +1474,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post($account, 'sources/' . $params[ 'label' ], $params);
+        return $this->requestClass->post($account, 'sources/' . $params[ 'label' ], $params);
     }
     
     public function resetSourceStatus($account, $params, $force = false)
@@ -1599,10 +1491,10 @@ class ContextIO
             }
         }
         if ($force) {
-            return $this->post($account, 'sources/' . $params[ 'label' ], array('force_status_check' => 1));
+            return $this->requestClass->post($account, 'sources/' . $params[ 'label' ], array('force_status_check' => 1));
         }
         
-        return $this->post($account, 'sources/' . $params[ 'label' ], array('status' => 1));
+        return $this->requestClass->post($account, 'sources/' . $params[ 'label' ], array('status' => 1));
     }
     
     public function listSources($account, $params = null)
@@ -1617,7 +1509,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'sources', $params);
+        return $this->requestClass->get($account, 'sources', $params);
     }
     
     public function getSource($account, $params)
@@ -1634,7 +1526,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'sources/' . $params[ 'label' ]);
+        return $this->requestClass->get($account, 'sources/' . $params[ 'label' ]);
     }
     
     /**
@@ -1679,7 +1571,7 @@ class ContextIO
             $params[ 'type' ] = 'imap';
         }
         
-        return $this->post($account, 'sources/', $params);
+        return $this->requestClass->post($account, 'sources/', $params);
     }
     
     /**
@@ -1705,7 +1597,7 @@ class ContextIO
             }
         }
         
-        return $this->delete($account, 'sources/' . $params[ 'label' ]);
+        return $this->requestClass->delete($account, 'sources/' . $params[ 'label' ]);
     }
     
     public function syncSource($account, $params = array())
@@ -1718,10 +1610,10 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         if ($params == array()) {
-            return $this->post($account, 'sync');
+            return $this->requestClass->post($account, 'sync');
         }
         
-        return $this->post($account, 'sources/' . $params[ 'label' ] . '/sync');
+        return $this->requestClass->post($account, 'sources/' . $params[ 'label' ] . '/sync');
     }
     
     public function getSync($account, $params = array())
@@ -1734,10 +1626,10 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         if ($params == array()) {
-            return $this->get($account, 'sync');
+            return $this->requestClass->get($account, 'sync');
         }
         
-        return $this->get($account, 'sources/' . $params[ 'label' ] . '/sync');
+        return $this->requestClass->get($account, 'sources/' . $params[ 'label' ] . '/sync');
     }
     
     public function addFolderToSource($account, $params = array())
@@ -1754,7 +1646,7 @@ class ContextIO
             $path .= '?' . urlencode($params[ 'delim' ]);
         }
         
-        return $this->put($account, $path);
+        return $this->requestClass->put($account, $path);
     }
     
     public function deleteFolderFromSource($account, $params = array())
@@ -1767,12 +1659,12 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         if (array_key_exists('delim', $params)) {
-            return $this->delete($account,
+            return $this->requestClass->delete($account,
                 'sources/' . $params[ 'label' ] . '/folders/' . rawurlencode($params[ 'folder' ]),
                 array('delim' => $params[ 'delim' ]));
         }
         
-        return $this->delete($account,
+        return $this->requestClass->delete($account,
             'sources/' . $params[ 'label' ] . '/folders/' . rawurlencode($params[ 'folder' ]));
     }
     
@@ -1792,7 +1684,7 @@ class ContextIO
             throw new \InvalidArgumentException('gmail_thread_id, message_id or message is a required hash key');
         }
         
-        return $this->post($account, 'exits/' . $params[ 'label' ], $params);
+        return $this->requestClass->post($account, 'exits/' . $params[ 'label' ], $params);
     }
     
     public function listSourceFolders($account, $params = array())
@@ -1812,7 +1704,7 @@ class ContextIO
         $source = $params[ 'label' ];
         unset($params[ 'label' ]);
         
-        return $this->get($account, 'sources/' . $source . '/folders', $params);
+        return $this->requestClass->get($account, 'sources/' . $source . '/folders', $params);
     }
     
     public function getSourceFolder($account, $params = array())
@@ -1825,7 +1717,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->get($account,
+        return $this->requestClass->get($account,
             'sources/' . rawurlencode($params[ 'label' ]) . '/folders/' . rawurlencode($params[ 'folder' ]));
     }
     
@@ -1835,7 +1727,7 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         
-        return $this->get($account, 'webhooks');
+        return $this->requestClass->get($account, 'webhooks');
     }
     
     public function getWebhook($account, $params)
@@ -1852,7 +1744,7 @@ class ContextIO
             }
         }
         
-        return $this->get($account, 'webhooks/' . $params[ 'webhook_id' ]);
+        return $this->requestClass->get($account, 'webhooks/' . $params[ 'webhook_id' ]);
     }
     
     public function addWebhook($account, $params)
@@ -1884,7 +1776,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post($account, 'webhooks/', $params);
+        return $this->requestClass->post($account, 'webhooks/', $params);
     }
     
     public function deleteWebhook($account, $params)
@@ -1901,7 +1793,7 @@ class ContextIO
             }
         }
         
-        return $this->delete($account, 'webhooks/' . $params[ 'webhook_id' ]);
+        return $this->requestClass->delete($account, 'webhooks/' . $params[ 'webhook_id' ]);
     }
     
     public function modifyWebhook($account, $params)
@@ -1914,61 +1806,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post($account, 'webhooks/' . $params[ 'webhook_id' ], $params);
-    }
-    
-    /**
-     * Specify the API endpoint.
-     *
-     * @param string $endPoint
-     *
-     * @return boolean success
-     */
-    public function setEndPoint($endPoint)
-    {
-        $this->endPoint = $endPoint;
-        
-        return true;
-    }
-    
-    /**
-     * Specify whether or not API calls should be made over a secure connection.
-     * HTTPS is used on all calls by default.
-     *
-     * @param bool $sslOn Set to false to make calls over HTTP, true to use HTTPS
-     */
-    public function setSSL($sslOn = true)
-    {
-        $this->ssl = (is_bool($sslOn)) ? $sslOn : true;
-    }
-    
-    /**
-     * Set the API version. By default, the latest official version will be used
-     * for all calls.
-     *
-     * @param string $apiVersion Context.IO API version to use
-     *
-     * @return boolean success
-     */
-    public function setApiVersion($apiVersion)
-    {
-        if ($apiVersion != '2.0') {
-            return false;
-        }
-        $this->apiVersion = $apiVersion;
-        
-        return true;
-    }
-    
-    /**
-     * Specify whether OAuth parameters should be included as URL query parameters
-     * or sent as HTTP Authorization headers. The default is URL query parameters.
-     *
-     * @param bool $authHeadersOn Set to true to use HTTP Authorization headers, false to use URL query params
-     */
-    public function useAuthorizationHeaders($authHeadersOn = true)
-    {
-        $this->authHeaders = (is_bool($authHeadersOn)) ? $authHeadersOn : true;
+        return $this->requestClass->post($account, 'webhooks/' . $params[ 'webhook_id' ], $params);
     }
     
     /**
@@ -1980,7 +1818,7 @@ class ContextIO
      */
     public function listApplicationWebhook()
     {
-        return $this->get(null, 'webhooks/');
+        return $this->requestClass->get(null, 'webhooks/');
     }
     
     /**
@@ -2003,7 +1841,7 @@ class ContextIO
             }
         }
         
-        return $this->get(null, 'webhooks/' . $params[ 'webhook_id' ]);
+        return $this->requestClass->get(null, 'webhooks/' . $params[ 'webhook_id' ]);
     }
     
     /**
@@ -2044,7 +1882,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post(null, 'webhooks/', $params);
+        return $this->requestClass->post(null, 'webhooks/', $params);
     }
     
     /**
@@ -2067,7 +1905,7 @@ class ContextIO
             }
         }
         
-        return $this->delete(null, 'webhooks/' . $params[ 'webhook_id' ]);
+        return $this->requestClass->delete(null, 'webhooks/' . $params[ 'webhook_id' ]);
     }
     
     /**
@@ -2109,321 +1947,7 @@ class ContextIO
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
         
-        return $this->post(null, 'webhooks/' . $params[ 'webhook_id' ], $params);
-    }
-    
-    /**
-     * Returns the ContextIOResponse object for the last API call.
-     * @return \ContextIO\ContextIOResponse
-     */
-    public function getLastResponse()
-    {
-        return $this->lastResponse;
-    }
-    
-    protected function buildBaseUrl()
-    {
-        $url = 'http';
-        if ($this->ssl) {
-            $url = 'https';
-        }
-        
-        return "$url://" . $this->endPoint . "/" . $this->apiVersion . '/';
-    }
-    
-    protected function buildUrl($action)
-    {
-        return $this->buildBaseUrl() . $action;
-    }
-    
-    /**
-     * Whether reponse headers should be saved in class property.
-     *
-     * @param bool $saveHeaders
-     */
-    public function setSaveHeaders($saveHeaders = true)
-    {
-        $this->saveHeaders = $saveHeaders;
-    }
-    
-    /**
-     * After how long the unused connection should be closed.
-     *
-     * @param $requestTimeout
-     */
-    public function setRequestTimeout($requestTimeout)
-    {
-        $this->requestTimeout = $requestTimeout;
-    }
-    
-    /**
-     * Sends a GET HTTP request.
-     *
-     * @param string $account
-     * @param string $action
-     * @param null $parameters
-     * @param null $acceptableContentTypes
-     *
-     * @return array|bool|\ContextIO\ContextIOResponse
-     */
-    protected function get($account, $action = '', $parameters = null, $acceptableContentTypes = null)
-    {
-        if (is_array($account)) {
-            $tmp_results = array();
-            foreach ($account as $accnt) {
-                $result = $this->sendRequest('GET', $accnt, $action, $parameters, null, $acceptableContentTypes);
-                if ($result === false) {
-                    return false;
-                }
-                $tmp_results[ $accnt ] = $result;
-            }
-            
-            return $tmp_results;
-        }
-        
-        return $this->sendRequest('GET', $account, $action, $parameters, null, $acceptableContentTypes);
-    }
-    
-    /**
-     * Sends a PUT HTTP request.
-     *
-     * @param string $account
-     * @param string $action
-     * @param null $parameters
-     * @param array $httpHeadersToSet
-     *
-     * @return bool|ContextIOResponse
-     */
-    protected function put($account, $action, $parameters = null, $httpHeadersToSet = array())
-    {
-        return $this->sendRequest('PUT', $account, $action, $parameters, null, null, $httpHeadersToSet);
-    }
-    
-    /**
-     * Sends a POST HTTP request.
-     *
-     * @param string $account
-     * @param string $action
-     * @param null $parameters
-     * @param null $file
-     * @param array $httpHeadersToSet
-     *
-     * @return bool|ContextIOResponse
-     */
-    protected function post($account, $action = '', $parameters = null, $file = null, $httpHeadersToSet = array())
-    {
-        return $this->sendRequest('POST', $account, $action, $parameters, $file, null, $httpHeadersToSet);
-    }
-    
-    /**
-     * Sends a DELETE HTTP request.
-     *
-     * @param string $account
-     * @param string $action
-     * @param null $parameters
-     *
-     * @return bool|ContextIOResponse
-     */
-    protected function delete($account, $action = '', $parameters = null)
-    {
-        return $this->sendRequest('DELETE', $account, $action, $parameters);
-    }
-    
-    /**
-     * Makes an HTTP request using cURL.
-     *
-     * @param string $httpMethod
-     * @param string $account
-     * @param string $action
-     * @param null|array $parameters
-     * @param null|array $file
-     * @param null|array $acceptableContentTypes
-     * @param array $httpHeadersToSet
-     *
-     * @return bool|\ContextIO\ContextIOResponse
-     *
-     * @throws cURLException
-     */
-    protected function sendRequest(
-        $httpMethod,
-        $account,
-        $action,
-        $parameters = null,
-        $file = null,
-        $acceptableContentTypes = null,
-        $httpHeadersToSet = array()
-    ) {
-        $consumer = new oAuth\OAuthConsumer($this->oauthKey, $this->oauthSecret);
-        $accessToken = null;
-        if (!is_null($account)) {
-            $action = 'accounts/' . $account . '/' . $action;
-            if (substr($action, -1) == '/') {
-                $action = substr($action, 0, -1);
-            }
-            if (!is_null($this->accessToken) && !is_null($this->accessTokenSecret)) {
-                $accessToken = new oAuth\OAuthToken($this->accessToken, $this->accessTokenSecret);
-            }
-        }
-        $baseUrl = $this->buildUrl($action);
-        $isMultiPartPost = (!is_null($file) && array_key_exists('field', $file) && array_key_exists('filename', $file));
-        if ($isMultiPartPost || is_string($parameters)) {
-            $this->authHeaders = true;
-        }
-        $signatureParams = $parameters;
-        if ($isMultiPartPost) {
-            $signatureParams = array();
-        }
-        if (is_string($parameters)) {
-            $signatureParams = array();
-        }
-        if (($httpMethod != 'GET') && is_array($parameters)) {
-            if (!in_array('Content-Type: application/x-www-form-urlencoded', $httpHeadersToSet)) {
-                $signatureParams = array();
-            } else {
-                $newParams = '';
-                foreach ($parameters as $key => $value) {
-                    if (!is_array($value)) {
-                        if ($newParams != '') {
-                            $newParams .= '&';
-                        }
-                        $newParams .= "$key=" . urlencode($value);
-                    } else {
-                        unset($signatureParams[ $key ]);
-                        $signatureParams[ $key . '[]' ] = $value;
-                        foreach ($value as $currentValue) {
-                            if ($newParams != '') {
-                                $newParams .= '&';
-                            }
-                            $newParams .= $key . '[]=' . urlencode($currentValue);
-                        }
-                    }
-                }
-                $parameters = $newParams;
-            }
-        }
-        
-        $req = oAuth\OAuthRequest::fromConsumerAndToken(
-            $consumer, $accessToken, $httpMethod, $baseUrl, $signatureParams
-        );
-        $sig_method = new oAuth\SignatureMethods\HMAC_SHA1();
-        $req->signRequest($sig_method, $consumer, $accessToken);
-        
-        //get data using signed url
-        if ($this->authHeaders) {
-            if ($httpMethod != 'POST') {
-                $curl = curl_init((is_null($parameters) || is_string($parameters) || (count($parameters) == 0)) ? $baseUrl : $baseUrl . '?' . oAuth\OAuthUtil::buildHttpQuery($parameters));
-            } else {
-                $curl = curl_init($baseUrl);
-            }
-            $httpHeadersToSet[] = $req->toHeader();
-        } else {
-            $curl = curl_init($req->toUrl());
-        }
-        
-        if ($this->ssl) {
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        }
-        
-        curl_setopt($curl, CURLOPT_USERAGENT, 'ContextIOLibrary/2.0 (PHP)');
-        
-        if ($httpMethod != 'GET') {
-            if ($httpMethod == 'POST') {
-                curl_setopt($curl, CURLOPT_POST, true);
-                if (!is_null($parameters)) {
-                    if (is_null($file)) {
-                        if (is_string($parameters)) {
-                            $httpHeadersToSet[] = 'Content-Length: ' . strlen($parameters);
-                        }
-                    } else {
-                        $parameters[ $file[ 'field' ] ] = $file[ 'filename' ];
-                    }
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters);
-                } elseif (!is_null($file)) {
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, array($file[ 'field' ] => $file[ 'filename' ]));
-                } else {
-                    $httpHeadersToSet[] = 'Content-Length: 0';
-                }
-            } else {
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $httpMethod);
-                if ($httpMethod == 'PUT') {
-                    if (is_string($parameters)) {
-                        $httpHeadersToSet[] = 'Content-Length: ' . strlen($parameters);
-                    }
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters);
-                }
-            }
-        }
-        if (count($httpHeadersToSet) > 0) {
-            curl_setopt($curl, CURLOPT_HTTPHEADER, $httpHeadersToSet);
-        }
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        
-        if ($this->requestTimeout !== null) {
-            curl_setopt($curl, CURLOPT_TIMEOUT, $this->requestTimeout);
-        }
-        
-        if ($this->saveHeaders) {
-            $this->responseHeaders = array();
-            $this->requestHeaders = array();
-            curl_setopt($curl, CURLOPT_HEADERFUNCTION, array($this, 'addResponseHeaders'));
-            curl_setopt($curl, CURLINFO_HEADER_OUT, 1);
-        }
-        $result = curl_exec($curl);
-        
-        $errno = curl_errno($curl);
-        if (!empty($errno)) {
-            throw new cURLException($curl);
-        }
-        
-        if ($this->saveHeaders) {
-            $httpHeadersIn = $this->responseHeaders;
-            $httpHeadersOut = preg_split('/(\\n|\\r){1,2}/', curl_getinfo($curl, CURLINFO_HEADER_OUT));
-        } else {
-            $httpHeadersIn = null;
-            $httpHeadersOut = null;
-        }
-        
-        if (is_null($acceptableContentTypes)) {
-            $response = new ContextIOResponse(
-                curl_getinfo($curl, CURLINFO_HTTP_CODE),
-                $httpHeadersOut,
-                $httpHeadersIn,
-                curl_getinfo($curl, CURLINFO_CONTENT_TYPE),
-                $result
-            );
-        } else {
-            $response = new ContextIOResponse(
-                curl_getinfo($curl, CURLINFO_HTTP_CODE),
-                $httpHeadersOut,
-                $httpHeadersIn,
-                curl_getinfo($curl, CURLINFO_CONTENT_TYPE),
-                $result,
-                $acceptableContentTypes
-            );
-        }
-        curl_close($curl);
-        if ($response->hasError()) {
-            $this->lastResponse = $response;
-            
-            return false;
-        }
-        
-        return $response;
-    }
-    
-    /**
-     * Add response headers to a property.
-     *
-     * @param $curl
-     * @param string $headers
-     *
-     * @return int
-     */
-    public function addResponseHeaders($curl, $headers)
-    {
-        $this->responseHeaders[] = trim($headers, "\n\r");
-        
-        return strlen($headers);
+        return $this->requestClass->post(null, 'webhooks/' . $params[ 'webhook_id' ], $params);
     }
     
     /**
