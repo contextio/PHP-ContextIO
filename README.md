@@ -32,8 +32,8 @@ include_once("vendor/autoload.php");
 define('CONSUMER_KEY', 'YOUR API CONSUMER KEY');
 define('CONSUMER_SECRET', 'YOUR API CONSUMER SECRET');
 
-// many calls are based for a User - you can define a USER_ID to make these calls
-// the USER_ID is returned in either the listUsers call or the getUser call
+// many calls are based for an Account - you can define a ACCOUNT_ID to make these calls
+// the ACCOUNT_ID is returned in either the listAccounts call or the getAccount call
 // you can also get this from the interactive console
 define('ACCOUNT_ID', 'A CONTEXTIO ACCOUNT ID');
 
