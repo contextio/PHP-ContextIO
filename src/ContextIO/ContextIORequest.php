@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Krystian
- * Date: 2017-06-29
- * Time: 10:54
- */
 
 namespace ContextIO;
 
