@@ -23,7 +23,7 @@ You can install the library by adding it as a dependency to your composer.json.
 
 ```
 "require": {
-  "contextio/php-contextio": "dev-master"
+  "contextio/php-contextio": ">=2.*"
 }
 ```
 

@@ -23,8 +23,6 @@ THE SOFTWARE.
 
 /**
  * Context.IO API client library
- * @copyright Copyright (C) 2011 DokDok Inc.
- * @licence http://opensource.org/licenses/mit-license MIT Licence
  */
 
 require_once dirname(__FILE__) . '/class.contextioresponse.php';

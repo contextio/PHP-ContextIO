@@ -23,8 +23,6 @@ THE SOFTWARE.
 
 /**
  * Container of the ContextIOResponse class
- * @copyright Copyright (C) 2011 DokDok Inc.
- * @licence http://opensource.org/licenses/mit-license MIT Licence
  */
 
 class ContextIOResponse {
