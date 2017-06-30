@@ -12,11 +12,6 @@ A PHP Client Library for [Context.IO](http://context.io).
 
 PHP Curl (http://php.net/curl)
 
-## Install using Github
-
-Copy class.contextio.php, class.contextioresponse.php and OAuth.php into your library
-directory, then ```require_once '/class.contextio.php';``` in your code.
-
 ## Install using Composer
 
 You can install the library by adding it as a dependency to your composer.json.
@@ -30,15 +25,20 @@ You can install the library by adding it as a dependency to your composer.json.
 ## Examples
 
 ```php
-// include the lib
-include_once("class.contextio.php");
+// include Composer's autoloader
+include_once("vendor/autoload.php");
 
 // define your API key and secret - find this https://console.context.io/#settings
 define('CONSUMER_KEY', 'YOUR API CONSUMER KEY');
 define('CONSUMER_SECRET', 'YOUR API CONSUMER SECRET');
 
+// many calls are based for an Account - you can define a ACCOUNT_ID to make these calls
+// the ACCOUNT_ID is returned in either the listAccounts call or the getAccount call
+// you can also get this from the interactive console
+define('ACCOUNT_ID', 'A CONTEXTIO ACCOUNT ID');
+
 // instantiate the contextio object
-$contextio = new ContextIO(CONSUMER_KEY, CONSUMER_SECRET);
+$contextio = new ContextIO\ContextIO(CONSUMER_KEY, CONSUMER_SECRET);
 
 // get a list of accounts and print the response data out
 $r = $contextio->listAccounts();
@@ -63,7 +63,6 @@ print_r($r);
 define('FOLDER', 'A FOLDER NAME');
 $params = array('label'=>LABEL, 'folder'=>FOLDER);
 $r = $contextio->listMessagesBySourceAndFolder(ACCOUNT_ID, $params);
-
 print_r($r);
 
 // It's a good idea to do error handling on your api calls. You can get the last error response 
@@ -83,4 +82,4 @@ while($x < 10) { //retry the call up to 10 times if it fails
 
 ```
 
-Refer to the class.contextio.php file to see a list of all the methods.
+All methods are listed in src/ContextIO/ContextIO.php
