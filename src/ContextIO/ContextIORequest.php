@@ -243,7 +243,7 @@ class ContextIORequest implements RequestInterface
         
         $errno = curl_errno($curl);
         if (!empty($errno)) {
-            throw new cURLException($curl);
+            throw new cURLException($curl, $errno);
         }
         
         if ($this->saveHeaders) {
