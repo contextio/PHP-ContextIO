@@ -63,6 +63,15 @@ class ContextIO
     }
     
     /**
+     * Returns the request class.
+     * @return RequestInterface
+     */
+    public function getRequestClass()
+    {
+        return $this->requestClass;
+    }
+
+    /**
      * Attempts to discover IMAP settings for a given email address
      * @link http://context.io/docs/2.0/discovery
      *
