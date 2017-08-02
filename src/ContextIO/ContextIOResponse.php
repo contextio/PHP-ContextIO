@@ -30,7 +30,7 @@ namespace ContextIO;
  */
 class ContextIOResponse
 {
-    
+
     protected $headers;
     protected $rawResponseHeaders;
     protected $rawRequestHeaders;
@@ -39,14 +39,14 @@ class ContextIOResponse
     protected $httpCode;
     protected $contentType;
     protected $hasError;
-    
+
     public function __construct(
         $httpCode,
         $requestHeaders,
         $responseHeaders,
         $contentType,
         $rawResponse,
-        $acceptableContentTypes = array('application/json')
+        $acceptableContentTypes = null
     ) {
         $this->httpCode = (int)$httpCode;
         $this->contentType = $contentType;
@@ -59,11 +59,11 @@ class ContextIOResponse
         $this->parseHeaders('response');
         $this->parseHeaders('request');
     }
-    
+
     private function parseHeaders($which = 'response')
     {
         $raw = ($which == 'response') ? $this->rawResponseHeaders : $this->rawRequestHeaders;
-        
+
         if ($raw !== false) {
             $headers = array();
             $headers[ ($which == 'response') ? 'Status-Line' : 'Request-Line' ] = trim(array_shift($raw));
@@ -104,52 +104,52 @@ class ContextIOResponse
             $this->headers[ $which ] = $headers;
         }
     }
-    
+
     private function decodeResponse($acceptableContentTypes)
     {
         if (!(($this->httpCode >= 200) && ($this->httpCode < 400))) {
             $this->hasError = true;
         }
-        if (!in_array($this->contentType, $acceptableContentTypes)) {
+        if (!in_array($this->contentType, $acceptableContentTypes) && $acceptableContentTypes != null) {
             $this->hasError = true;
-            
+
             return;
         }
         if ($this->contentType == 'application/json') {
             $this->decodedResponse = json_decode($this->rawResponse, true);
         }
     }
-    
+
     public function getRawResponse()
     {
         return $this->rawResponse;
     }
-    
+
     public function getRawResponseHeaders()
     {
         return $this->rawResponseHeaders;
     }
-    
+
     public function getResponseHeaders()
     {
         return $this->headers[ 'response' ];
     }
-    
+
     public function getRawRequestHeaders()
     {
         return $this->rawRequestHeaders;
     }
-    
+
     public function getRequestHeaders()
     {
         return $this->headers[ 'request' ];
     }
-    
+
     public function getHttpCode()
     {
         return $this->httpCode;
     }
-    
+
     /**
      * Returns the response body parsed into a PHP structure. To get the JSON
      * string, use getRawResponse()
@@ -158,7 +158,7 @@ class ContextIOResponse
     {
         return $this->decodedResponse;
     }
-    
+
     /**
      * Let's you access the value of one specific property in the response body.
      * This support nested properties. For example:
@@ -182,13 +182,13 @@ class ContextIOResponse
             $value = (strval(intval($prop)) === $prop) ? $value[ intval($prop) ] : (array_key_exists($prop,
                 $value)) ? $value[ $prop ] : null;
         } while (count($props) >= 1 && !is_null($value));
-        
+
         return $value;
     }
-    
+
     public function hasError()
     {
         return $this->hasError;
     }
-    
+
 }

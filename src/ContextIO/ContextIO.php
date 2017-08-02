@@ -434,10 +434,7 @@ class ContextIO
     }
     
     /**
-     * Returns the content a given attachment. If you want to save the attachment to
-     * a file, set $saveAs to the destination file name. If $saveAs is left to null,
-     * the function will return the file data.
-     * on the
+     * Returns the content of a given attachment.
      * @link http://context.io/docs/2.0/accounts/files/content
      *
      * @param string $account accountId of the mailbox you want to query
@@ -453,7 +450,7 @@ class ContextIO
         if (is_string($params)) {
             $params = array('file_id' => $params);
         } else {
-            $params = $this->checkFilterParams($params, array('file_id', 'as_link'), array('file_id'));
+            $params = $this->checkFilterParams($params, array('file_id'), array('file_id'));
             if ($params === false) {
                 throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
             }
