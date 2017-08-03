@@ -430,7 +430,7 @@ class ContextIO
         }
         
         return $this->lastRequest->get($account, 'files/' . $params[ 'file_id' ] . '/content', array('as_link' => 1),
-            array('text/uri-list'));
+            array('text/uri-list', 'text/uri-list;charset=UTF-8'));
     }
     
     /**
