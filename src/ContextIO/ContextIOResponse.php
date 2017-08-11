@@ -110,7 +110,7 @@ class ContextIOResponse
         if (!(($this->httpCode >= 200) && ($this->httpCode < 400))) {
             $this->hasError = true;
         }
-        if (!in_array($this->contentType, $acceptableContentTypes) && $acceptableContentTypes != null) {
+        if ($acceptableContentTypes != null && !in_array($this->contentType, $acceptableContentTypes)) {
             $this->hasError = true;
 
             return;
