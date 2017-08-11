@@ -77,7 +77,7 @@ while($x < 10) { //retry the call up to 10 times if it fails
 
 // You can set a request timeout, after which a ContextIO\cURLException will be thrown if 
 // no response has been received from the API
-$contextio->getRequestClass()->setRequestTimeout(10);
+$contextio->getLastRequest()->setRequestTimeout(10);
 
 ```
 
