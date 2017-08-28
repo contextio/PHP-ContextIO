@@ -29,35 +29,35 @@ You can install the library by adding it as a dependency to your composer.json.
 include_once("vendor/autoload.php");
 
 // define your API key and secret - find this https://console.context.io/#settings
-define('CONSUMER_KEY', 'YOUR API CONSUMER KEY');
-define('CONSUMER_SECRET', 'YOUR API CONSUMER SECRET');
+$apiKey = 'YOUR API KEY';
+$apiSecret = 'YOUR API SECRET';
 
 // many calls are based for an Account - you can define a ACCOUNT_ID to make these calls
 // the ACCOUNT_ID is returned in either the listAccounts call or the getAccount call
 // you can also get this from the interactive console
-define('ACCOUNT_ID', 'A CONTEXTIO ACCOUNT ID');
+$accountId = 'A CONTEXTIO ACCOUNT ID';
 
 // instantiate the contextio object
-$contextio = new ContextIO\ContextIO(CONSUMER_KEY, CONSUMER_SECRET);
+$contextio = new ContextIO\ContextIO($apiKey, $apiSecret);
 
 // get a list of accounts and print the response data out
 $response = $contextio->listAccounts();
 print_r($response->getData());
 
 // You also need to know the SOURCE_LABEL and FOLDER to list messages.
-$response = $contextio->listSources(ACCOUNT_ID);
+$response = $contextio->listSources($accountId);
 print_r($response->getData());
 
 // You can see all the folders in an email account using the listEmailAccountFolders method
-define('LABEL', 'A SOURCE LABEL');
-$params = array('label'=>LABEL);
-$response = $contextio->listSourceFolders(ACCOUNT_ID, $params);
+$label = 'A SOURCE LABEL';
+$params = array('label'=> $label);
+$response = $contextio->listSourceFolders($accountId, $params);
 print_r($response);
 
 // Now that you know the ACCOUNT_ID, LABEL, and FOLDER you can list messages
-define('FOLDER', 'A FOLDER NAME');
-$params = array('label'=>LABEL, 'folder'=>FOLDER);
-$response = $contextio->listMessagesBySourceAndFolder(ACCOUNT_ID, $params);
+$folder = 'A FOLDER NAME';
+$params = array('label'=> $label, 'folder'=> $folder);
+$response = $contextio->listMessagesBySourceAndFolder($accountId, $params);
 print_r($response);
 
 // It's a good idea to do error handling on your api calls. You can get the last error response 
