@@ -1,6 +1,6 @@
 # Context.IO
 
-* [API Documentation](http://context.io/docs/2.0/)
+* [API Documentation](https://docs.context.io)
 * [API Explorer](https://console.context.io/#explore)
 * [Sign Up](http://context.io)
 
