@@ -1769,7 +1769,6 @@ class ContextIO
             'filter_file_revisions',
             'sync_period',
             'callback_url',
-            'failure_notif_url',
             'filter_folder_added',
             'filter_folder_removed',
             'filter_to_domain',
@@ -1777,7 +1776,7 @@ class ContextIO
             'filter_parsed_receipts',
             'include_body',
             'body_type',
-        ), array('callback_url', 'failure_notif_url'));
+        ), array('callback_url'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
@@ -1872,7 +1871,6 @@ class ContextIO
             'filter_file_revisions',
             'sync_period',
             'callback_url',
-            'failure_notif_url',
             'filter_folder_added',
             'filter_folder_removed',
             'filter_to_domain',
@@ -1937,7 +1935,6 @@ class ContextIO
             'filter_file_revisions',
             'sync_period',
             'callback_url',
-            'failure_notif_url',
             'filter_folder_added',
             'filter_folder_removed',
             'filter_to_domain',
