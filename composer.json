@@ -3,10 +3,11 @@
     "description": "PHP Client Library for Context.IO API",
     "keywords": ["contextio", "imap"],
     "homepage": "http://context.io/",
+    "license": "Apache-2.0",
     "type": "library",
     "authors": [
         {
-            "name": "Dominik Gehl"
+            "name": "Susi Rathmann, Cecy Correa"
 	}
     ],
     "require": {
