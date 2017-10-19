@@ -1764,18 +1764,16 @@ class ContextIO
             'filter_cc',
             'filter_subject',
             'filter_thread',
-            'filter_new_important',
             'filter_file_name',
-            'filter_file_revisions',
-            'sync_period',
             'callback_url',
             'filter_folder_added',
             'filter_folder_removed',
             'filter_to_domain',
             'filter_from_domain',
-            'filter_parsed_receipts',
             'include_body',
             'body_type',
+            'receive_drafts',
+            'receive_all_changes'
         ), array('callback_url'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
@@ -1806,7 +1804,24 @@ class ContextIO
         if (is_null($account) || !is_string($account) || (!strpos($account, '@') === false)) {
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
-        $params = $this->checkFilterParams($params, array('webhook_id', 'active'), array('webhook_id', 'active'));
+        $params = $this->checkFilterParams($params, array(
+            'filter_to',
+            'filter_from',
+            'filter_cc',
+            'filter_subject',
+            'filter_thread',
+            'filter_file_name',
+            'callback_url',
+            'filter_folder_added',
+            'filter_folder_removed',
+            'filter_to_domain',
+            'filter_from_domain',
+            'include_body',
+            'body_type',
+            'receive_drafts',
+            'receive_all_changes',
+            'active'
+        ), array('callback_url'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
         }
@@ -1868,19 +1883,17 @@ class ContextIO
             'filter_thread',
             'filter_new_important',
             'filter_file_name',
-            'filter_file_revisions',
-            'sync_period',
             'callback_url',
             'filter_folder_added',
             'filter_folder_removed',
             'filter_to_domain',
             'filter_from_domain',
-            'filter_parsed_receipts',
             'include_body',
             'body_type',
             'include_header',
             'receive_all_changes',
             'receive_historical',
+            'receive_drafts'
         ), array('callback_url'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
@@ -1930,21 +1943,18 @@ class ContextIO
             'filter_cc',
             'filter_subject',
             'filter_thread',
-            'filter_new_important',
             'filter_file_name',
-            'filter_file_revisions',
-            'sync_period',
             'callback_url',
             'filter_folder_added',
             'filter_folder_removed',
             'filter_to_domain',
             'filter_from_domain',
-            'filter_parsed_receipts',
             'include_body',
             'body_type',
             'include_header',
             'receive_all_changes',
             'receive_historical',
+            'receive_drafts'
         ), array('webhook_id'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
