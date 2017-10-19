@@ -1773,7 +1773,8 @@ class ContextIO
             'include_body',
             'body_type',
             'receive_drafts',
-            'receive_all_changes'
+            'receive_all_changes',
+            'include_header'
         ), array('callback_url'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
@@ -1820,6 +1821,7 @@ class ContextIO
             'body_type',
             'receive_drafts',
             'receive_all_changes',
+            'include_header',
             'active'
         ), array('callback_url'));
         if ($params === false) {
@@ -1881,7 +1883,6 @@ class ContextIO
             'filter_cc',
             'filter_subject',
             'filter_thread',
-            'filter_new_important',
             'filter_file_name',
             'callback_url',
             'filter_folder_added',
@@ -1893,7 +1894,8 @@ class ContextIO
             'include_header',
             'receive_all_changes',
             'receive_historical',
-            'receive_drafts'
+            'receive_drafts',
+            'include_header'
         ), array('callback_url'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
@@ -1954,7 +1956,8 @@ class ContextIO
             'include_header',
             'receive_all_changes',
             'receive_historical',
-            'receive_drafts'
+            'receive_drafts',
+            'include_header'
         ), array('webhook_id'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
