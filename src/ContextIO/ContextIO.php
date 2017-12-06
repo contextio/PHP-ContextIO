@@ -1953,7 +1953,8 @@ class ContextIO
             'receive_all_changes',
             'receive_historical',
             'receive_drafts',
-            'include_header'
+            'include_header',
+            'active'
         ), array('webhook_id'));
         if ($params === false) {
             throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
