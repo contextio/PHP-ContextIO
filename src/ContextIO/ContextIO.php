@@ -1445,43 +1445,7 @@ class ContextIO
 
         return $this->lastRequest->delete($account, 'sources/' . $params[ 'label' ]);
     }
-
-    public function addFolderToSource($account, $params = array())
-    {
-        if (is_null($account) || !is_string($account) || (!strpos($account, '@') === false)) {
-            throw new \InvalidArgumentException('account must be string representing accountId');
-        }
-        $params = $this->checkFilterParams($params, array('label', 'folder', 'delim'), array('label', 'folder'));
-        if ($params === false) {
-            throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
-        }
-        $path = 'sources/' . rawurlencode($params[ 'label' ]) . '/folders/' . rawurlencode($params[ 'folder' ]);
-        if (array_key_exists('delim', $params)) {
-            $path .= '?' . urlencode($params[ 'delim' ]);
-        }
-
-        return $this->lastRequest->put($account, $path);
-    }
-
-    public function deleteFolderFromSource($account, $params = array())
-    {
-        if (is_null($account) || !is_string($account) || (!strpos($account, '@') === false)) {
-            throw new \InvalidArgumentException('account must be string representing accountId');
-        }
-        $params = $this->checkFilterParams($params, array('label', 'folder', 'delim'), array('label', 'folder'));
-        if ($params === false) {
-            throw new \InvalidArgumentException("params array contains invalid parameters or misses required parameters");
-        }
-        if (array_key_exists('delim', $params)) {
-            return $this->lastRequest->delete($account,
-                'sources/' . $params[ 'label' ] . '/folders/' . rawurlencode($params[ 'folder' ]),
-                array('delim' => $params[ 'delim' ]));
-        }
-
-        return $this->lastRequest->delete($account,
-            'sources/' . $params[ 'label' ] . '/folders/' . rawurlencode($params[ 'folder' ]));
-    }
-
+    
     public function listSourceFolders($account, $params = array())
     {
         if (is_null($account) || !is_string($account) || (!strpos($account, '@') === false)) {
