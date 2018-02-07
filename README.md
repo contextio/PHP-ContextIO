@@ -1,3 +1,7 @@
+# This version of the API will be partially deprecated June 15th, 2018 and completely deprecated December 15th, 2018
+
+[https://blog.context.io/important-announcement-deprecation-of-2-0-api-8f73488a8c0e](READ MORE HERE)
+
 # Context.IO
 
 * [API Documentation](https://docs.context.io)
