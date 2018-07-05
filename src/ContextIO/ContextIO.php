@@ -554,9 +554,6 @@ class ContextIO
             throw new \InvalidArgumentException('account must be string representing accountId');
         }
         $requiredParams = array('dst_folder');
-        if (array_key_exists('src_file', $params)) {
-            // $requiredParams[] = 'dst_label';
-        }
         $params = $this->checkFilterParams($params, array(
             'dst_folder',
             'dst_source',
@@ -567,7 +564,6 @@ class ContextIO
             'flag_deleted',
             'flag_draft',
             'message_id',
-            'email_message_id',
             'gmail_message_id',
         ), $requiredParams);
         if ($params === false) {
@@ -582,19 +578,8 @@ class ContextIO
                 throw new \InvalidArgumentException("move parameter must be boolean or 0/1");
             }
         }
-        if (array_key_exists('src_file', $params)) {
-            $params[ 'src_file' ] = realpath($params[ 'src_file' ]);
-            if (($params[ 'src_file' ] === false) || !is_readable($params[ 'src_file' ])) {
-                throw new \InvalidArgumentException("invalid source file");
-            }
-            $src_file = '@' . $params[ 'src_file' ];
-            unset($params[ 'src_file' ]);
-
-            return $this->lastRequest->post($account, 'messages', $params, array('field' => 'message', 'filename' => $src_file));
-        } elseif (array_key_exists('message_id', $params)) {
+        if (array_key_exists('message_id', $params)) {
             return $this->lastRequest->post($account, 'messages/' . $params[ 'message_id' ], $params);
-        } elseif (array_key_exists('email_message_id', $params)) {
-            return $this->lastRequest->post($account, 'messages/' . rawurlencode($params[ 'email_message_id' ]), $params);
         } elseif (array_key_exists('gmail_message_id', $params)) {
             if (substr($params[ 'gmail_message_id' ], 0, 3) == 'gm-') {
                 return $this->lastRequest->post($account, 'messages/' . $params[ 'gmail_message_id' ], $params);
@@ -602,7 +587,7 @@ class ContextIO
 
             return $this->lastRequest->post($account, 'messages/gm-' . $params[ 'gmail_message_id' ], $params);
         } else {
-            throw new \InvalidArgumentException('src_file, message_id, email_message_id or gmail_message_id is a required hash key');
+            throw new \InvalidArgumentException('message_id or gmail_message_id is a required hash key');
         }
     }
 
